@@ -49,7 +49,6 @@ exports.editUserHelper = async (user, id) => {
         returning: true,
       })
       .catch((err) => {
-        logger.error(err);
         return {
           success: false,
           data: err,
@@ -63,6 +62,7 @@ exports.editUserHelper = async (user, id) => {
     }
     throw userData.data;
   } catch (err) {
+    logger.error(err);
     return {
       data: err,
       success: false,
@@ -115,10 +115,7 @@ exports.getUsersListHelper = async (search_key, pageLimit, pageNumber) => {
         };
       });
     if (data.error) {
-      return {
-        success: false,
-        data: data.message,
-      };
+      throw data.message;
     }
     return {
       success: true,
