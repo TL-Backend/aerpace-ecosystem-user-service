@@ -10,6 +10,7 @@ const sampleTest = async (req, res, next) => {
   try {
     logger.info('success');
     return successResponse({
+      data: {},
       req,
       res,
       message: 'sample test route executed successfully',
