@@ -18,7 +18,8 @@ const { sendEmail } = require('../../utils/email-sender');
 
 exports.login = async (req, res, next) => {
   try {
-    const { password: enteredPassword } = req.body;
+    let { password: enteredPassword } = req.body;
+    enteredPassword = enteredPassword.trim();
     const userData = req.userData;
     const { password, id } = userData;
     const isPasswordVerified = await verifyPassword(enteredPassword, password);
@@ -56,10 +57,11 @@ exports.login = async (req, res, next) => {
 
 exports.forgotPassword = async (req, res, next) => {
   try {
-    const { email } = req.body;
+    let { email } = req.body;
+    email = email.trim();
     const userData = req.userData;
     const { data: reset_uuid } = await createPasswordResetEntry(userData);
-    await sendEmail(email, reset_uuid);
+    // await sendEmail(email, reset_uuid);
     return successResponse({
       res,
       message: successResponses.RESET_LINK_SENT.message,
@@ -78,7 +80,8 @@ exports.forgotPassword = async (req, res, next) => {
 exports.resetPassword = async (req, res, next) => {
   try {
     const resetData = req.resetData;
-    const { new_password } = req.body;
+    let { new_password } = req.body;
+    new_password = new_password.trim();
     const { data: userData } = await getUser(
       { id: resetData.user_id },
       { raw: false },

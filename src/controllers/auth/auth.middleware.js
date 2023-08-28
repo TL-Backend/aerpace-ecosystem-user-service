@@ -8,6 +8,7 @@ const moment = require('moment');
 
 const loginValidation = [
   check('email')
+    .trim()
     .isEmail()
     .withMessage(errorResponses.EMAIL_INVALID.message)
     .custom(async (value, { req, res }) => {
@@ -18,6 +19,7 @@ const loginValidation = [
       req.userData = activeUserData;
     }),
   check('password')
+    .trim()
     .isString()
     .withMessage(errorResponses.PASSWORD_INVALID.message),
   (req, res, next) => {
@@ -36,6 +38,7 @@ const loginValidation = [
 
 const forgotPasswordValidations = [
   check('email')
+    .trim()
     .isEmail()
     .withMessage(errorResponses.EMAIL_INVALID.message)
     .custom(async (value, { req }) => {
@@ -78,6 +81,7 @@ const resetPasswordValidations = [
       req.resetData = resetData;
     }),
   check('new_password')
+    .trim()
     .isString()
     .withMessage(errorResponses.PASSWORD_INVALID.message),
   (req, res, next) => {
