@@ -84,10 +84,7 @@ exports.validateDataInDBById = async (id_key, table) => {
       .catch((err) => {
         return undefined;
       });
-    if (!data) {
-      return false;
-    }
-    return true;
+    return data;
   } catch (err) {
     return false;
   }
@@ -102,9 +99,9 @@ exports.getUsersListHelper = async (search_key, pageLimit, pageNumber) => {
       .then((data) => {
         return {
           data: {
-            users: data[0] || [],
-            pageLimit: pageLimit || 10,
-            pageNumber: pageNumber || 1,
+            users: data[0],
+            pageLimit: parseInt(pageLimit) || 10,
+            pageNumber: parseInt(pageNumber) || 1,
             totalPages: Math.round(
               parseInt(data[0][0]?.data_count || 0) / limit,
             ),
