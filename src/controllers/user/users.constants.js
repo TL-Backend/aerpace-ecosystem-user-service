@@ -8,6 +8,7 @@ exports.errorMessages = {
   INVAILD_SEARCH_KEY: 'Invalid search key, it should be string!',
   PAGE_LIMIT_MESSAGE: 'Page limit should be positive',
   PAGE_NUMBER_MESSAGE: 'Page number should be positive',
+  INVALID_USER_TYPE_MESSAGE: 'Invalid user type, it must be a string',
 };
 
 exports.successMessages = {

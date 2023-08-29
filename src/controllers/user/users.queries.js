@@ -11,10 +11,10 @@ exports.getDataById = (table) => {
 exports.getListUsersQuery = (search_key, pageLimit, pageNumber) => {
   let querySearchCondition = ``;
   let queryPagination = ' ';
-  if (Boolean(search_key)) {
+  if (search_key) {
     querySearchCondition = `WHERE first_name ILIKE '%${search_key}%' OR last_name ILIKE '%${search_key}%'`;
   }
-  if (Boolean(pageNumber) || Boolean(pageLimit)) {
+  if (pageNumber || pageLimit) {
     let page = pageNumber ? pageNumber : 1;
     let pagesize = pageLimit ? pageLimit : 10;
     queryPagination = `OFFSET((${parseInt(page)}-1)*${parseInt(pagesize)})

@@ -25,6 +25,9 @@ exports.validateUserInput = async (req, res, next) => {
         messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('first_name'),
       );
     }
+    if (user_type && (!first_name?.trim() || typeof first_name !== 'string')) {
+      errorsList.push(messages.errorMessages.INVALID_USER_TYPE_MESSAGE);
+    }
     if (!last_name?.trim() || typeof last_name !== 'string') {
       errorsList.push(
         messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('last_name'),
@@ -45,7 +48,7 @@ exports.validateUserInput = async (req, res, next) => {
         messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('phone_number'),
       );
     }
-    var validRegex =
+    let validRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     if (!email?.trim() || !email.match(validRegex)) {
       errorsList.push(messages.errorMessages.INVAILD_EMAIL_FORMAT_MESSAGE);
