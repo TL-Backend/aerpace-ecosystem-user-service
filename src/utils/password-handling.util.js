@@ -6,8 +6,7 @@ const generateTemporaryPassword = async (length = 10) => {
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let password = '';
   for (let index = 0; index < length; index++) {
-    const random = crypto.randomBytes(1);
-    const randomIndex = Math.floor(random * charset.length);
+    const randomIndex = crypto.randomInt(0, charset.length);
     password += charset[randomIndex];
   }
   return password;
