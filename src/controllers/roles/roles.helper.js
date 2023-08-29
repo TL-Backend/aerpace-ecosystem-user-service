@@ -201,22 +201,22 @@ const getPermissionTree = (masterList, permission, tree) => {
         tree[index].features.push(isPresent);
       }
     } else if (permission.includes(element.identifier)) {
-        let index = tree.findIndex(
-          (element1) => element1.identifier == element.identifier,
-        );
+      let index = tree.findIndex(
+        (element1) => element1.identifier == element.identifier,
+      );
 
-        if (index == -1) {
-          tree.push({});
-          index = tree.length - 1;
-          tree[index].page_id = element.page_id;
-          tree[index].name = element.name;
-          tree[index].identifier = element.identifier;
-          tree[index].pages = [];
-          tree[index].features = [];
-        }
-
-        getPermissionTree(element?.pages, permission, tree[index].pages);
+      if (index == -1) {
+        tree.push({});
+        index = tree.length - 1;
+        tree[index].page_id = element.page_id;
+        tree[index].name = element.name;
+        tree[index].identifier = element.identifier;
+        tree[index].pages = [];
+        tree[index].features = [];
       }
+
+      getPermissionTree(element?.pages, permission, tree[index].pages);
+    }
   });
 };
 
