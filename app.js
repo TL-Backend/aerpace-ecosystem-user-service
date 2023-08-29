@@ -7,6 +7,9 @@ const app = express();
 const { errorResponse } = require('./src/utils/responseHandler');
 const { statusCodes } = require('./src/utils/statusCodes');
 const { router } = require('./src/routes/index');
+const {
+  addMasterPermissionsToCache,
+} = require('./src/controllers/roles/roles.helper');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -33,5 +36,6 @@ app.use((error, req, res, next) =>
 );
 
 app.listen(process.env.PORT || 3000, () => {
+  addMasterPermissionsToCache();
   console.log(`server started running on port ${process.env.PORT || 3000}`);
 });
