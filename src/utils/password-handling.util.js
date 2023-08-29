@@ -1,11 +1,12 @@
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const generateTemporaryPassword = async (length = 10) => {
   const charset =
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let password = '';
   for (let index = 0; index < length; index++) {
-    const random = Math.random();
+    const random = crypto.randomBytes(1);
     const randomIndex = Math.floor(random * charset.length);
     password += charset[randomIndex];
   }
