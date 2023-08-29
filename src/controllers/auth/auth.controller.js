@@ -61,7 +61,7 @@ exports.forgotPassword = async (req, res, next) => {
     email = email.trim();
     const userData = req.userData;
     const { data: reset_uuid } = await createPasswordResetEntry(userData);
-    // await sendEmail(email, reset_uuid);
+    await sendEmail(email, reset_uuid);
     return successResponse({
       res,
       message: successResponses.RESET_LINK_SENT.message,
