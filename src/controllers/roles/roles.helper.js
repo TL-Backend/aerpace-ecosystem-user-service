@@ -62,7 +62,7 @@ exports.addRole = async (params) => {
 
     const featuresExists = await sequelize.query(
       getFeaturesByIdentifiersQuery,
-      { replacements: { permissions: uniquePermissions } }
+      { replacements: { permissions: uniquePermissions } },
     );
 
     if (featuresExists[0][0].result === false) {
@@ -117,14 +117,14 @@ exports.addMasterPermissionsToCache = async () => {
       return err;
     });
 
-  if(pagesAndFeatures.pages === null || pagesAndFeatures.features === null ) {
-    return false
+  if (pagesAndFeatures.pages === null || pagesAndFeatures.features === null) {
+    return false;
   }
 
   const masterRolesData = transformPagesAndFeaturesObject(pagesAndFeatures);
   await redis.set('masterRolesTree', JSON.stringify(masterRolesData));
 
-  return masterRolesData
+  return masterRolesData;
 };
 
 getMasterRolesTree = async () => {
@@ -186,7 +186,7 @@ const getPermissionTree = (masterList, permission, tree) => {
     });
     if (isPresent) {
       let index = tree.findIndex(
-        (element1) => element1.identifier == element.identifier
+        (element1) => element1.identifier == element.identifier,
       );
 
       if (index == -1) {
@@ -203,7 +203,7 @@ const getPermissionTree = (masterList, permission, tree) => {
     } else {
       if (permission.includes(element.identifier)) {
         let index = tree.findIndex(
-          (element1) => element1.identifier == element.identifier
+          (element1) => element1.identifier == element.identifier,
         );
 
         if (index == -1) {

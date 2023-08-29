@@ -14,5 +14,5 @@ exports.errorResponses = {
   INVALID_FEATURES:
     'features do not exists, please send proper set of features',
   ROLE_CREATION_FAILED: 'failed to create role',
-  PAGES_OR_FEATURES_NOT_FOUND: 'pages or features are not found'
+  PAGES_OR_FEATURES_NOT_FOUND: 'pages or features are not found',
 };

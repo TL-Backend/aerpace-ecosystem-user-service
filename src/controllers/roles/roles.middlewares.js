@@ -12,13 +12,13 @@ exports.validateRoleInput = async (req, res, next) => {
 
     if (!role_name?.trim() || typeof role_name !== 'string') {
       errorsList.push(
-        errorResponses.INVAILD_STRING_OR_MISSING_ERROR('role_name')
+        errorResponses.INVAILD_STRING_OR_MISSING_ERROR('role_name'),
       );
     }
 
     if (!permissions || typeof permissions !== 'object') {
       errorsList.push(
-        errorResponses.INVAILD_OBJECT_OR_MISSING_ERROR('permissions')
+        errorResponses.INVAILD_OBJECT_OR_MISSING_ERROR('permissions'),
       );
     }
 
