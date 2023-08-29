@@ -127,7 +127,7 @@ exports.addMasterPermissionsToCache = async () => {
   return masterRolesData;
 };
 
-getMasterRolesTree = async () => {
+const getMasterRolesTree = async () => {
   try {
     let masterRolesTree = await redis.get('masterRolesTree');
 
@@ -200,8 +200,7 @@ const getPermissionTree = (masterList, permission, tree) => {
       } else {
         tree[index].features.push(isPresent);
       }
-    } else {
-      if (permission.includes(element.identifier)) {
+    } else if (permission.includes(element.identifier)) {
         let index = tree.findIndex(
           (element1) => element1.identifier == element.identifier,
         );
@@ -218,7 +217,6 @@ const getPermissionTree = (masterList, permission, tree) => {
 
         getPermissionTree(element?.pages, permission, tree[index].pages);
       }
-    }
   });
 };
 
