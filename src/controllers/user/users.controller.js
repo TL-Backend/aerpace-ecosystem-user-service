@@ -97,7 +97,6 @@ exports.getUsersList = async (req, res) => {
       req,
       res,
       code: statusCodes.STATUS_CODE_FAILURE,
-      message: err,
     });
   }
 };

@@ -1,9 +1,14 @@
 const {
   aergov_users,
   sequelize,
+  aergov_user_roles,
 } = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
 const { logger } = require('../../utils/logger');
-const { getDataById, getListUsersQuery } = require('./users.queries');
+const {
+  getDataById,
+  getListUsersQuery,
+  getUserRoleId,
+} = require('./users.queries');
 
 exports.addUserHelper = async (user) => {
   try {
@@ -19,21 +24,20 @@ exports.addUserHelper = async (user) => {
       state: user.state,
       user_type: user.user_type || 'USER',
     };
-    const userData = await aergov_users.create(params).catch((err) => {
-      logger.error(err);
-      return {
-        success: false,
-        data: err,
-      };
+    const userData = await aergov_users.create(params);
+    delete userData.password;
+    await aergov_user_roles.create({
+      user_id: userData.id,
+      role_id: user.role_id,
     });
-    if (!userData.success) {
+    if (userData) {
       return {
         success: true,
         data: userData,
       };
     }
-    throw userData.data;
   } catch (err) {
+    logger.error(err);
     return {
       data: err,
       success: false,
@@ -43,24 +47,41 @@ exports.addUserHelper = async (user) => {
 
 exports.editUserHelper = async (user, id) => {
   try {
-    const userData = await aergov_users
-      .update(user, {
-        where: { id },
-        returning: true,
-      })
-      .catch((err) => {
-        return {
-          success: false,
-          data: err,
-        };
+    const userData = await aergov_users.update(user, {
+      where: { id },
+      returning: true,
+    });
+    console.log('user data', userData);
+    if (user.role_id) {
+      const query = getUserRoleId;
+      const data = await sequelize.query(query, {
+        replacements: { user_id: id, role_id: user.role_id },
+        type: sequelize.QueryTypes.SELECT,
       });
-    if (!userData.success) {
+      if (data[0].id) {
+        await aergov_users.update(
+          {
+            user_id: id,
+            role_id: user.role_id,
+          },
+          {
+            where: { id: data.id },
+            returning: true,
+          },
+        );
+      } else {
+        await aergov_user_roles.create({
+          user_id: id,
+          role_id: user.role_id,
+        });
+      }
+    }
+    if (userData) {
       return {
         success: true,
         data: userData,
       };
     }
-    throw userData.data;
   } catch (err) {
     logger.error(err);
     return {
@@ -73,20 +94,20 @@ exports.editUserHelper = async (user, id) => {
 exports.validateDataInDBById = async (id_key, table) => {
   try {
     const query = getDataById(table);
-    const data = await sequelize
-      .query(query, {
-        replacements: { id_key },
-        type: sequelize.QueryTypes.SELECT,
-      })
-      .then((data) => {
-        return data[0];
-      })
-      .catch((err) => {
-        return undefined;
-      });
-    return data;
+    const data = await sequelize.query(query, {
+      replacements: { id_key },
+      type: sequelize.QueryTypes.SELECT,
+    });
+    return {
+      data: data[0],
+      success: true,
+    };
   } catch (err) {
-    return false;
+    logger.error(err);
+    return {
+      data: err,
+      success: false,
+    };
   }
 };
 
@@ -94,34 +115,18 @@ exports.getUsersListHelper = async (search_key, pageLimit, pageNumber) => {
   try {
     const query = getListUsersQuery(search_key, pageLimit, pageNumber);
     let limit = pageLimit || 10;
-    const data = await sequelize
-      .query(query)
-      .then((data) => {
-        return {
-          data: {
-            users: data[0],
-            pageLimit: parseInt(pageLimit) || 10,
-            pageNumber: parseInt(pageNumber) || 1,
-            totalPages: Math.round(
-              parseInt(data[0][0]?.data_count || 0) / limit,
-            ),
-          },
-        };
-      })
-      .catch((err) => {
-        return {
-          error: true,
-          message: err,
-        };
-      });
-    if (data.error) {
-      throw data.message;
-    }
+    const data = await sequelize.query(query);
     return {
       success: true,
-      data: data,
+      data: {
+        users: data[0],
+        pageLimit: parseInt(pageLimit) || 10,
+        pageNumber: parseInt(pageNumber) || 1,
+        totalPages: Math.round(parseInt(data[0][0]?.data_count || 0) / limit),
+      },
     };
   } catch (err) {
+    logger.error(err);
     return {
       success: false,
       data: err,

@@ -1,18 +1,22 @@
 const { dbTables } = require('../../utils/constants');
 
 exports.getDataById = (table) => {
-  const query = `SELECT *
+  return `SELECT *
   FROM ${table}
   WHERE id = :id_key
   `;
-  return query;
 };
+
+exports.getUserRoleId = `SELECT id
+  FROM ${dbTables.USER_ROLES_TABLE}
+  WHERE user_id = :user_id AND role_id = :role_id
+  `;
 
 exports.getListUsersQuery = (search_key, pageLimit, pageNumber) => {
   let querySearchCondition = ``;
   let queryPagination = ' ';
   if (search_key) {
-    querySearchCondition = `WHERE first_name ILIKE '%${search_key}%' OR last_name ILIKE '%${search_key}%'`;
+    querySearchCondition = `WHERE usr.first_name ILIKE '%${search_key}%' OR usr.last_name ILIKE '%${search_key}%'`;
   }
   if (pageNumber || pageLimit) {
     queryPagination = `OFFSET((${parseInt(pageNumber || 1)}-1)*${parseInt(
@@ -20,12 +24,16 @@ exports.getListUsersQuery = (search_key, pageLimit, pageNumber) => {
     )})
            ROWS FETCH NEXT ${parseInt(pageLimit || 10)} ROWS ONLY`;
   }
-  const query = `select
-    COUNT(*) OVER() AS data_count,
-    *
-    FROM ${dbTables.USERS_TABLE}
-    ${querySearchCondition}
-    ${queryPagination}
-    `;
-  return query;
+  return `SELECT
+  COUNT(*) OVER() AS data_count,
+  usr.id AS user_id,
+  usr.first_name, usr.last_name, usr.email, usr.phone_number, usr.country_code, usr.address, usr.pin_code, usr.state,
+  json_agg(json_build_object('role_name', r.role_name, 'roles', r.id)) AS roles
+  FROM ${dbTables.USERS_TABLE} as usr
+  LEFT JOIN ${dbTables.USER_ROLES_TABLE} as urole ON urole.user_id = usr.id
+  LEFT JOIN ${dbTables.ROLES_TABLE} as r ON r.id = urole.role_id
+  ${querySearchCondition}
+  GROUP BY usr.id, usr.first_name, usr.last_name, usr.email, usr.phone_number, usr.country_code, usr.address, usr.pin_code, usr.state
+  ${queryPagination};
+`;
 };
