@@ -1,6 +1,6 @@
 const expirationTime = {
-  LOGIN_ACCESS_TOKEN: '2d',
-  REFRESH_TOKEN: '10d',
+  ID_TOKEN: '4h',
+  REFRESH_TOKEN: '30d',
 };
 
 module.exports = {

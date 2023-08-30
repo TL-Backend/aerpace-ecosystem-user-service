@@ -21,21 +21,45 @@ exports.login = async (req, res, next) => {
     let { password: enteredPassword } = req.body;
     enteredPassword = enteredPassword.trim();
     const userData = req.userData;
-    const { password, id } = userData;
+    const {
+      password,
+      user_id,
+      first_name,
+      last_name,
+      email,
+      phone_number,
+      role_id,
+      role_name,
+    } = userData;
     const isPasswordVerified = await verifyPassword(enteredPassword, password);
     if (isPasswordVerified) {
-      const accessToken = generateTokens(
-        { id },
-        expirationTime.LOGIN_ACCESS_TOKEN,
+      const idToken = generateTokens(
+        { user_id, role_id, token_type: 'ID_TOKEN' },
+        expirationTime.ID_TOKEN,
       );
-      const refreshToken = generateTokens({ id }, expirationTime.REFRESH_TOKEN);
+      const refreshToken = generateTokens(
+        { user_id, token_type: 'REFRESH_TOKEN' },
+        expirationTime.REFRESH_TOKEN,
+      );
       const token = {
-        accessToken,
+        idToken,
         refreshToken,
+      };
+      const profile_data = {
+        first_name,
+        last_name,
+        email,
+        phone_number,
+        user_id,
+        role_id,
+        role_name,
       };
       return successResponse({
         res,
-        data: token,
+        data: {
+          token,
+          profile_data,
+        },
         message: successResponses.LOGIN_SUCCESSFUL.message,
         code: statusCodes.STATUS_CODE_SUCCESS,
       });

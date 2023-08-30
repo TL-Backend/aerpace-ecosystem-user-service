@@ -1,3 +1,7 @@
+const { query } = require('express');
+const {
+  sequelize,
+} = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
 const { errorResponse } = require('../../utils/responseHandler');
 const { statusCodes } = require('../../utils/statusCodes');
 const { errorResponses } = require('./auth.constants');
@@ -5,6 +9,7 @@ const { getUser, getResetData, checkResetValidity } = require('./auth.helper');
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
+const { queries } = require('./auth.queries');
 
 const loginValidation = [
   check('email')
@@ -12,11 +17,14 @@ const loginValidation = [
     .isEmail()
     .withMessage(errorResponses.EMAIL_INVALID.message)
     .custom(async (value, { req, res }) => {
-      const { data: activeUserData } = await getUser({ email: value });
-      if (!activeUserData) {
+      const userRolesData = await sequelize.query(queries.getUser, {
+        replacements: { email: value },
+        type: sequelize.QueryTypes.SELECT,
+      });
+      if (!userRolesData[0]) {
         throw new Error(errorResponses.EMAIL_INVALID.message);
       }
-      req.userData = activeUserData;
+      req.userData = userRolesData[0];
     }),
   check('password')
     .trim()
@@ -42,11 +50,11 @@ const forgotPasswordValidations = [
     .isEmail()
     .withMessage(errorResponses.EMAIL_INVALID.message)
     .custom(async (value, { req }) => {
-      const { data: activeUserData } = await getUser({ email: value });
-      if (!activeUserData) {
+      const { data: userData } = await getUser({ email: value });
+      if (!userData) {
         throw new Error(errorResponses.EMAIL_INVALID.message);
       }
-      req.userData = activeUserData;
+      req.userData = userData;
     }),
   (req, res, next) => {
     const errors = validationResult(req);
