@@ -10,7 +10,7 @@ const {
 } = require('../controllers/user/users.middleware');
 
 module.exports = function (app) {
-  app.post('/user', validateUserInput, addUser);
-  app.patch('/user/:id', validateUserUpdateInput, editUser);
+  app.post('/users', validateUserInput, addUser);
+  app.patch('/users/:id', validateUserUpdateInput, editUser);
   app.get('/users', validateGetUsersInput, getUsersList);
 };

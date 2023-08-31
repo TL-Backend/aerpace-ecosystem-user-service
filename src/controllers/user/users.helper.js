@@ -25,7 +25,6 @@ exports.addUserHelper = async (user) => {
       user_type: user.user_type || 'USER',
     };
     const userData = await aergov_users.create(params);
-    delete userData.password;
     await aergov_user_roles.create({
       user_id: userData.id,
       role_id: user.role_id,
@@ -51,7 +50,6 @@ exports.editUserHelper = async (user, id) => {
       where: { id },
       returning: true,
     });
-    console.log('user data', userData);
     if (user.role_id) {
       const query = getUserRoleId;
       const data = await sequelize.query(query, {
