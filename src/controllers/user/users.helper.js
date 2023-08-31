@@ -11,6 +11,7 @@ const {
 } = require('./users.queries');
 
 exports.addUserHelper = async (user) => {
+  const transaction = await sequelize.transaction();
   try {
     const params = {
       first_name: user.first_name,
@@ -24,12 +25,16 @@ exports.addUserHelper = async (user) => {
       state: user.state,
       user_type: user.user_type || 'USER',
     };
-    const userData = await aergov_users.create(params);
-    await aergov_user_roles.create({
-      user_id: userData.id,
-      role_id: user.role_id,
-    });
+    const userData = await aergov_users.create(params, { transaction });
     if (userData) {
+      await aergov_user_roles.create(
+        {
+          user_id: userData.id,
+          role_id: user.role_id,
+        },
+        { transaction },
+      );
+      transaction.commit();
       return {
         success: true,
         data: userData,
@@ -37,6 +42,7 @@ exports.addUserHelper = async (user) => {
     }
   } catch (err) {
     logger.error(err);
+    transaction.rollback();
     return {
       data: err,
       success: false,
@@ -45,11 +51,16 @@ exports.addUserHelper = async (user) => {
 };
 
 exports.editUserHelper = async (user, id) => {
+  const transaction = await sequelize.transaction();
   try {
-    const userData = await aergov_users.update(user, {
-      where: { id },
-      returning: true,
-    });
+    const userData = await aergov_users.update(
+      user,
+      {
+        where: { id },
+        returning: true,
+      },
+      { transaction },
+    );
     if (user.role_id) {
       const query = getUserRoleId;
       const data = await sequelize.query(query, {
@@ -66,15 +77,20 @@ exports.editUserHelper = async (user, id) => {
             where: { id: data.id },
             returning: true,
           },
+          { transaction },
         );
       } else {
-        await aergov_user_roles.create({
-          user_id: id,
-          role_id: user.role_id,
-        });
+        await aergov_user_roles.create(
+          {
+            user_id: id,
+            role_id: user.role_id,
+          },
+          { transaction },
+        );
       }
     }
     if (userData) {
+      transaction.commit();
       return {
         success: true,
         data: userData,
@@ -82,6 +98,7 @@ exports.editUserHelper = async (user, id) => {
     }
   } catch (err) {
     logger.error(err);
+    transaction.rollback();
     return {
       data: err,
       success: false,
@@ -112,7 +129,6 @@ exports.validateDataInDBById = async (id_key, table) => {
 exports.getUsersListHelper = async (search_key, pageLimit, pageNumber) => {
   try {
     const query = getListUsersQuery(search_key, pageLimit, pageNumber);
-    let limit = pageLimit || 10;
     const data = await sequelize.query(query);
     return {
       success: true,
@@ -120,7 +136,9 @@ exports.getUsersListHelper = async (search_key, pageLimit, pageNumber) => {
         users: data[0],
         pageLimit: parseInt(pageLimit) || 10,
         pageNumber: parseInt(pageNumber) || 1,
-        totalPages: Math.round(parseInt(data[0][0]?.data_count || 0) / limit),
+        totalPages: Math.round(
+          parseInt(data[0][0]?.data_count || 0) / pageLimit,
+        ),
       },
     };
   } catch (err) {
