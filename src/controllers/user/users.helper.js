@@ -13,19 +13,8 @@ const {
 exports.addUserHelper = async (user) => {
   const transaction = await sequelize.transaction();
   try {
-    const params = {
-      first_name: user.first_name,
-      last_name: user.last_name || '',
-      role_id: user.role_id,
-      email: user.email,
-      phone_number: user.phone_number,
-      country_code: user.country_code,
-      address: user.address,
-      pin_code: user.pin_code,
-      state: user.state,
-      user_type: user.user_type || 'USER',
-    };
-    const userData = await aergov_users.create(params, { transaction });
+    if (!user.user_type) user.user_type = 'USER';
+    const userData = await aergov_users.create(user, { transaction });
     if (userData) {
       await aergov_user_roles.create(
         {
