@@ -30,6 +30,7 @@ exports.login = async (req, res, next) => {
       phone_number,
       role_id,
       role_name,
+      first_time_login,
     } = userData;
     const isPasswordVerified = await verifyPassword(enteredPassword, password);
     if (isPasswordVerified) {
@@ -53,6 +54,7 @@ exports.login = async (req, res, next) => {
         user_id,
         role_id,
         role_name,
+        first_time_login,
       };
       return successResponse({
         res,
@@ -121,6 +123,8 @@ exports.resetPassword = async (req, res, next) => {
         message: errorResponses.SAME_PASSWORD_USED_ERROR.message,
       });
     }
+    userData.first_time_login = 0;
+    await userData.save();
     resetData.status = 0;
     await resetData.save();
     return successResponse({
