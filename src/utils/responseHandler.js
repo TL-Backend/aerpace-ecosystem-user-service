@@ -10,7 +10,7 @@ const successResponse = ({
   data = {},
   code = statusCodes.STATUS_CODE_SUCCESS,
   message = '',
-}) => res.status(code).send({ data, code, message });
+}) => res.status(code).send({ code, message, data });
 
 const errorResponse = ({
   req,
@@ -31,9 +31,9 @@ const errorResponse = ({
     '';
 
   return res.status(code).send({
-    data,
     code,
     message,
+    data,
   });
 };
 

@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 require('dotenv').config();
 
-const mailService = async (params) => {
+const mailService = async ({ params }) => {
   AWS.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_KEY_ID,
@@ -11,7 +11,7 @@ const mailService = async (params) => {
   await ses.sendEmail(params).promise();
 };
 
-const sendEmail = async (email, resetUuid) => {
+const sendEmail = async ({ email, resetUuid }) => {
   const resetLink = `https://example.com/reset-password?uuid=${resetUuid}`;
   const emailContent = emailConstants.RESET_LINK_EMAIL_CONTENT.replace(
     '$resetLink',
@@ -36,10 +36,10 @@ const sendEmail = async (email, resetUuid) => {
     Source: emailConstants.FROM_EMAIL,
     ReplyToAddresses: [emailConstants.REPLY_TO_EMAIL],
   };
-  await mailService(params);
+  await mailService({ params });
 };
 
-const sendTemporaryPasswordEmail = async (email, temporaryPassword) => {
+const sendTemporaryPasswordEmail = async ({ email, temporaryPassword }) => {
   const emailContent = emailConstants.TEMPORARY_PASSWORD_EMAIL_CONTENT.replace(
     '{temporaryPassword}',
     temporaryPassword,
@@ -63,7 +63,7 @@ const sendTemporaryPasswordEmail = async (email, temporaryPassword) => {
     Source: emailConstants.FROM_EMAIL,
     ReplyToAddresses: [emailConstants.REPLY_TO_EMAIL],
   };
-  await mailService(params);
+  await mailService({ params });
 };
 
 const emailConstants = {

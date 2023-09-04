@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
-const generateTemporaryPassword = async (length = 10) => {
+exports.generateTemporaryPassword = async (length = 10) => {
   const charset =
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let password = '';
@@ -12,19 +12,13 @@ const generateTemporaryPassword = async (length = 10) => {
   return password;
 };
 
-const hashPassword = async (password) => {
+exports.hashPassword = async ({ password }) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
   return hashedPassword;
 };
 
-const verifyPassword = async (password, hashedPassword) => {
-  const isPasswordVerified = await bcrypt.compare(password, hashedPassword);
+exports.verifyPassword = async ({ enteredPassword, password }) => {
+  const isPasswordVerified = await bcrypt.compare(enteredPassword, password);
   return isPasswordVerified;
-};
-
-module.exports = {
-  hashPassword,
-  verifyPassword,
-  generateTemporaryPassword,
 };

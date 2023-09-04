@@ -1,143 +1,105 @@
-const { query } = require('express');
-const {
-  sequelize,
-} = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
 const { errorResponse } = require('../../utils/responseHandler');
 const { statusCodes } = require('../../utils/statusCodes');
-const { errorResponses } = require('./auth.constants');
-const { getUser, getResetData, checkResetValidity } = require('./auth.helper');
-const { check, validationResult } = require('express-validator');
+const { errorResponses } = require('./auth.constant');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
-const { queries } = require('./auth.queries');
+const { logger } = require('../../utils/logger');
 
-const loginValidation = [
-  check('email')
-    .trim()
-    .isEmail()
-    .withMessage(errorResponses.EMAIL_INVALID.message)
-    .custom(async (value, { req, res }) => {
-      const userRolesData = await sequelize.query(queries.getUser, {
-        replacements: { email: value },
-        type: sequelize.QueryTypes.SELECT,
-      });
-      if (!userRolesData[0]) {
-        throw new Error(errorResponses.EMAIL_INVALID.message);
-      }
-      req.userData = userRolesData[0];
-    }),
-  check('password')
-    .trim()
-    .isString()
-    .withMessage(errorResponses.PASSWORD_INVALID.message),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return errorResponse({
-        req,
-        res,
-        code: statusCodes.STATUS_CODE_INVALID_FORMAT,
-        message: errors.errors[0].msg,
-      });
+exports.loginValidation = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const errorsList = [];
+    if (!email || typeof email !== 'string') {
+      errorsList.push(errorResponses.EMAIL_INVALID);
+    }
+    if (!password || typeof password !== 'string') {
+      errorsList.push(errorResponses.PASSWORD_INVALID);
+    }
+    if (errorsList.length) {
+      throw errorsList.join();
     }
     next();
-  },
-];
+  } catch (err) {
+    logger.error(err);
+    return errorResponse({
+      req,
+      res,
+      error: err,
+      message: err,
+      code: statusCodes.STATUS_CODE_INVALID_FORMAT,
+    });
+  }
+};
 
-const forgotPasswordValidations = [
-  check('email')
-    .trim()
-    .isEmail()
-    .withMessage(errorResponses.EMAIL_INVALID.message)
-    .custom(async (value, { req }) => {
-      const { data: userData } = await getUser({ email: value });
-      if (!userData) {
-        throw new Error(errorResponses.EMAIL_INVALID.message);
-      }
-      req.userData = userData;
-    }),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return errorResponse({
-        req,
-        res,
-        code: statusCodes.STATUS_CODE_INVALID_FORMAT,
-        message: errors.errors[0].msg,
-      });
+exports.forgotPasswordValidations = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const errorsList = [];
+    if (!email || typeof email !== 'string') {
+      errorsList.push(errorResponses.EMAIL_INVALID);
+    }
+    if (errorsList.length) {
+      throw errorsList.join();
     }
     next();
-  },
-];
+  } catch (err) {
+    logger.error(err);
+    return errorResponse({
+      req,
+      res,
+      error: err,
+      message: err,
+      code: statusCodes.STATUS_CODE_INVALID_FORMAT,
+    });
+  }
+};
 
-const resetPasswordValidations = [
-  check('uuid')
-    .isString()
-    .withMessage(errorResponses.UUID_INVALID.message)
-    .custom(async (value, { req }) => {
-      const { data: resetData } = await getResetData(
-        { uuid: value },
-        { raw: false },
-      );
-      if (!resetData) {
-        throw new Error(errorResponses.UUID_INVALID.message);
-      }
-      const { data: isResetInfoValid } = await checkResetValidity(resetData);
-      if (!isResetInfoValid) {
-        throw new Error(errorResponses.INVALID_RESET_LINK.message);
-      }
-      req.resetData = resetData;
-    }),
-  check('new_password')
-    .trim()
-    .isString()
-    .withMessage(errorResponses.PASSWORD_INVALID.message),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return errorResponse({
-        req,
-        res,
-        code: statusCodes.STATUS_CODE_INVALID_FORMAT,
-        message: errors.errors[0].msg,
-      });
+exports.resetPasswordValidations = async (req, res, next) => {
+  try {
+    const { uuid } = req.params;
+    const { new_password: password } = req.body;
+    const errorsList = [];
+    if (typeof uuid !== 'string') {
+      errorsList.push(errorResponses.UUID_INVALID);
+    }
+    if (!password || typeof password !== 'string') {
+      errorsList.push(errorResponses.PASSWORD_INVALID);
+    }
+    if (errorsList.length) {
+      throw errorsList.join();
     }
     next();
-  },
-];
+  } catch (err) {
+    logger.error(err);
+    return errorResponse({
+      req,
+      res,
+      error: err,
+      message: err,
+      code: statusCodes.STATUS_CODE_INVALID_FORMAT,
+    });
+  }
+};
 
-const refreshTokenValidation = [
-  check('authorization')
-    .isString()
-    .withMessage(errorResponses.TOKEN_EXPIRED.message)
-    .custom(async (value, { req }) => {
-      const decodedToken = jwt.verify(
-        JSON.parse(value),
-        process.env.SECURITY_KEY,
-      );
-      const tokenExpiration = moment.unix(decodedToken.exp);
-      if (moment().isAfter(tokenExpiration)) {
-        throw new Error(errorResponses.TOKEN_EXPIRED.message);
-      }
-      req.decodedToken = decodedToken;
-    }),
-  (req, res, next) => {
-    const errors = validationResult(req.headers.authorization);
-    if (!errors.isEmpty()) {
-      return errorResponse({
-        req,
-        res,
-        code: statusCodes.STATUS_CODE_INVALID_FORMAT,
-        message: errors.errors[0].msg,
-      });
+exports.refreshTokenValidation = async (req, res, next) => {
+  try {
+    const errorsList = [];
+    const authorization = req.headers.authorization;
+    if (!authorization) {
+      errorsList.push(errorResponses.TOKEN_INVALID);
+    }
+    if (errorsList.length) {
+      throw errorsList.join();
     }
     next();
-  },
-];
-
-module.exports = {
-  loginValidation,
-  forgotPasswordValidations,
-  resetPasswordValidations,
-  refreshTokenValidation,
+  } catch (err) {
+    logger.error(err);
+    return errorResponse({
+      req,
+      res,
+      err,
+      message: err,
+      code: statusCodes.STATUS_CODE_INVALID_FORMAT,
+    });
+  }
 };
