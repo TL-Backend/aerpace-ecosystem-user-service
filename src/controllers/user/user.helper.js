@@ -8,7 +8,7 @@ const {
   getDataById,
   getListUsersQuery,
   getUserRoleId,
-} = require('./users.queries');
+} = require('./user.query');
 
 exports.addUserHelper = async (user) => {
   const transaction = await sequelize.transaction();

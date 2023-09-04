@@ -6,10 +6,10 @@ const {
   addUserHelper,
   editUserHelper,
   getUsersListHelper,
-} = require('./users.helper');
+} = require('./user.helper');
 const { statusCodes } = require('../../utils/statusCodes');
 const { logger } = require('../../utils/logger');
-const messages = require('./users.constants');
+const messages = require('./user.constants');
 
 exports.addUser = async (req, res) => {
   try {
