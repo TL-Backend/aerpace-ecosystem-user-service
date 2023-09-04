@@ -21,45 +21,42 @@ exports.listRolesHelper = async (search = '') => {
       params.search = search;
     }
     const fetchRolesQuery = listRolesQuery(params);
-    const roles = await sequelize
-      .query(fetchRolesQuery)
-      .then((data) => {
-        return data[0];
-      })
-      .catch((err) => {
-        return err;
-      });
+    const roles = await sequelize.query(fetchRolesQuery).then((data) => {
+      return data[0];
+    });
     return {
       success: true,
       data: roles,
+      message: successResponses.ROLES_FETCHED,
     };
   } catch (err) {
     return {
       success: false,
-      message: errorResponses.INTERNAL_ERROR,
-      code: statusCodes.STATUS_CODE_FAILURE,
+      message: err.message,
+      errorCode: statusCodes.STATUS_CODE_FAILURE,
+      data: null,
     };
   }
 };
 
 exports.addRole = async (params) => {
   try {
-    const { role_name, permissions } = params;
-
-    const uniquePermissions = [...new Set(permissions)];
+    const { role_name: roleName, permissions } = params;
 
     const roleWithNameData = await aergov_roles.findAll({
-      where: { role_name },
+      where: { role_name: roleName },
     });
 
     if (roleWithNameData.length > 0) {
       return {
         success: false,
-        code: statusCodes.STATUS_CODE_INVALID_FORMAT,
+        errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
         message: errorResponses.NAME_EXISTS,
+        data: null,
       };
     }
 
+    const uniquePermissions = [...new Set(permissions)];
     const featuresExists = await sequelize.query(
       getFeaturesByIdentifiersQuery,
       { replacements: { permissions: uniquePermissions } },
@@ -68,24 +65,32 @@ exports.addRole = async (params) => {
     if (featuresExists[0][0].result === false) {
       return {
         success: false,
-        code: statusCodes.STATUS_CODE_INVALID_FORMAT,
+        errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
         message: errorResponses.INVALID_FEATURES,
+        data: null,
       };
     }
 
-    const master = await getMasterRolesTree();
-    const permission_tree = generatePermissionTree(uniquePermissions, master);
+    const { success, data, message } = await this.getMasterPermissionsTree();
+    if (!success) {
+      return {
+        success: false,
+        message: err.message || 'failed to fetch master permission tree',
+        errorCode: statusCodes.STATUS_CODE_FAILURE,
+        data: null,
+      };
+    }
 
-    const addRoleInDb = await aergov_roles
-      .create({
-        role_name,
-        permission_list: uniquePermissions,
-        permission_tree: permission_tree,
-      })
-      .catch((err) => {
-        logger.error(err);
-        return err;
-      });
+    const permission_tree = this.generatePermissionTree(
+      uniquePermissions,
+      data,
+    );
+
+    const addRoleInDb = await aergov_roles.create({
+      role_name: roleName,
+      permission_list: uniquePermissions,
+      permission_tree: permission_tree,
+    });
 
     return {
       success: true,
@@ -94,58 +99,67 @@ exports.addRole = async (params) => {
         role_name: addRoleInDb.role_name,
       },
       message: successResponses.ROLE_CREATED,
-      code: statusCodes.STATUS_CODE_SUCCESS,
     };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return {
       success: false,
-      message: errorResponses.ROLE_CREATION_FAILED,
-      code: statusCodes.STATUS_CODE_FAILURE,
+      message: err.message,
+      errorCode: statusCodes.STATUS_CODE_FAILURE,
+      data: null,
     };
   }
 };
 
 exports.addMasterPermissionsToCache = async () => {
-  const pagesAndFeatures = await sequelize
-    .query(listMasterRolesQuery)
-    .then((data) => {
-      return data[0][0];
-    })
-    .catch((err) => {
-      logger.error(err);
-      return err;
-    });
-
-  if (pagesAndFeatures.pages === null || pagesAndFeatures.features === null) {
-    return false;
-  }
-
-  const masterRolesData = transformPagesAndFeaturesObject(pagesAndFeatures);
-  await redis.set('masterRolesTree', JSON.stringify(masterRolesData));
-
-  return masterRolesData;
-};
-
-const getMasterRolesTree = async () => {
   try {
-    let masterRolesTree = await redis.get('masterRolesTree');
+    const pagesAndFeatures = await sequelize
+      .query(listMasterRolesQuery)
+      .then((data) => {
+        return data[0][0];
+      });
 
-    if (masterRolesTree) {
-      return JSON.parse(masterRolesTree);
+    if (pagesAndFeatures.pages === null || pagesAndFeatures.features === null) {
+      return false;
     }
 
-    masterRolesTree = await addMasterPermissionsToCache();
-    return JSON.parse(masterRolesTree);
+    const masterRolesData =
+      this.pagesAndFeaturesToMasterPermissionTree(pagesAndFeatures);
+    logger.info(`masterRolesData = ${masterRolesData}`);
+    await redis.set('masterRolesTree', JSON.stringify(masterRolesData));
+
+    return masterRolesData;
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
+    return {};
+  }
+};
+
+exports.getMasterPermissionsTree = async () => {
+  try {
+    let masterPermissionTree = await redis.get('masterRolesTree');
+
+    if (masterPermissionTree) {
+      return JSON.parse(masterPermissionTree);
+    }
+
+    masterPermissionTree = await this.addMasterPermissionsToCache();
     return {
-      err,
+      success: true,
+      data: JSON.parse(masterPermissionTree),
+      message: 'fetched master permission tree successfully',
+    };
+  } catch (err) {
+    logger.error(err.message);
+    return {
+      success: false,
+      data: null,
+      message: err.message,
     };
   }
 };
 
-const transformPagesAndFeaturesObject = (pageAndFeaturesObject) => {
+exports.pagesAndFeaturesToMasterPermissionTree = (pageAndFeaturesObject) => {
   const pageLookup = new Map();
   const rootPages = [];
 
@@ -179,7 +193,7 @@ const transformPagesAndFeaturesObject = (pageAndFeaturesObject) => {
   return rootPages;
 };
 
-const getPermissionTree = (masterList, permission, tree) => {
+exports.getPermissionTree = (masterList, permission, tree) => {
   masterList.forEach((element) => {
     const isPresent = element.features.find((element) => {
       return element.identifier == permission;
@@ -215,15 +229,15 @@ const getPermissionTree = (masterList, permission, tree) => {
         tree[index].features = [];
       }
 
-      getPermissionTree(element?.pages, permission, tree[index].pages);
+      this.getPermissionTree(element?.pages, permission, tree[index].pages);
     }
   });
 };
 
-const generatePermissionTree = (permissions, masterList) => {
+exports.generatePermissionTree = (permissions, masterList) => {
   let tree = [];
   permissions.forEach((permission) => {
-    getPermissionTree(masterList, permission, tree);
+    this.getPermissionTree(masterList, permission, tree);
   });
 
   return tree;

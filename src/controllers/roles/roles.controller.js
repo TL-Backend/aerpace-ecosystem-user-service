@@ -10,7 +10,6 @@ const { errorResponses } = require('./roles.constants');
 exports.listRoles = async (req, res, next) => {
   try {
     const { search } = req.query;
-    logger.info(search);
     const { data, success, message, code } = await listRolesHelper(search);
     if (!success) {
       return errorResponse({
@@ -25,7 +24,7 @@ exports.listRoles = async (req, res, next) => {
       req,
       res,
       data: data,
-      message: '',
+      message: message,
       code: statusCodes.STATUS_CODE_SUCCESS,
     });
   } catch (err) {
@@ -46,8 +45,8 @@ exports.createRole = async (req, res, next) => {
       return errorResponse({
         req,
         res,
-        message: message,
-        code: code,
+        message,
+        code,
       });
     }
     return successResponse({
@@ -62,7 +61,7 @@ exports.createRole = async (req, res, next) => {
     return errorResponse({
       req,
       res,
-      message: errorResponses.INTERNAL_ERROR,
+      message: err.message,
       code: statusCodes.STATUS_CODE_FAILURE,
     });
   }

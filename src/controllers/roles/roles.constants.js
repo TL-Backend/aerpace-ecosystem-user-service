@@ -1,12 +1,13 @@
 exports.successResponses = {
-  ROLE_CREATED: 'role created successfully',
+  ROLE_CREATED: 'Role created successfully',
+  ROLES_FETCHED: `Roles fetched successfully`,
 };
 
 exports.errorResponses = {
-  INVAILD_STRING_OR_MISSING_ERROR: (value) => {
+  INVALID_STRING_OR_MISSING_ERROR: (value) => {
     return `${value} should be present and it must be an string`;
   },
-  INVAILD_OBJECT_OR_MISSING_ERROR: (value) => {
+  INVALID_OBJECT_OR_MISSING_ERROR: (value) => {
     return `${value} should be present and it must be an object`;
   },
   INTERNAL_ERROR: 'Internal error',
