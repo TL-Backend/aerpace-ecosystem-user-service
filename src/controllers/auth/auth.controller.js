@@ -191,7 +191,6 @@ exports.resetPassword = async (req, res, next) => {
       success: changePasswordSuccessStatus,
       errorCode: changePasswordCode,
       message: changePasswordMessage,
-      data: isPasswordUpdated,
     } = await changeUserPassword({
       userData,
       password,
@@ -238,7 +237,7 @@ exports.getAccessTokenWithRefresh = async (req, res, next) => {
         message,
       });
     }
-    const { id } = decodeToken;
+    const { id } = decodedToken;
     const idToken = generateTokens({
       payload: { id },
       expiresIn: expirationTime.ID_TOKEN,
