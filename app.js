@@ -9,7 +9,7 @@ const { statusCodes } = require('./src/utils/statusCodes');
 const { router } = require('./src/routes/index');
 const {
   addMasterPermissionsToCache,
-} = require('./src/controllers/roles/roles.helper');
+} = require('./src/controllers/role/role.helper');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

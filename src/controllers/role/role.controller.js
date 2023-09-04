@@ -2,10 +2,10 @@ const {
   successResponse,
   errorResponse,
 } = require('../../utils/responseHandler');
-const { listRolesHelper, addRole } = require('./roles.helper');
+const { listRolesHelper, addRole } = require('./role.helper');
 const { statusCodes } = require('../../utils/statusCodes');
 const { logger } = require('../../utils/logger');
-const { errorResponses } = require('./roles.constants');
+const { errorResponses } = require('./role.constant');
 
 exports.listRoles = async (req, res, next) => {
   try {

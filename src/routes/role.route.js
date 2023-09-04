@@ -1,9 +1,9 @@
 const {
   listRoles,
   createRole,
-} = require('../controllers/roles/roles.controller');
+} = require('../controllers/role/role.controller');
 
-const { validateRoleInput } = require('../controllers/roles/roles.middlewares');
+const { validateRoleInput } = require('../controllers/role/role.middleware');
 
 module.exports = function (app) {
   app.get('/roles', listRoles);

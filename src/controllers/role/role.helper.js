@@ -4,12 +4,12 @@ const {
 } = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
 const { logger } = require('../../utils/logger');
 const { statusCodes } = require('../../utils/statusCodes');
-const { errorResponses, successResponses } = require('./roles.constants');
+const { errorResponses, successResponses } = require('./role.constant');
 const {
   listRolesQuery,
   listMasterRolesQuery,
   getFeaturesByIdentifiersQuery,
-} = require('./roles.queries');
+} = require('./roles.querie');
 
 const Redis = require('ioredis');
 const redis = new Redis();
@@ -72,10 +72,12 @@ exports.addRole = async (params) => {
     }
 
     const { success, data, message } = await this.getMasterPermissionsTree();
+    console.log('data---', data);
     if (!success) {
+      console.log('err', message);
       return {
         success: false,
-        message: err.message || 'failed to fetch master permission tree',
+        message: message || 'failed to fetch master permission tree',
         errorCode: statusCodes.STATUS_CODE_FAILURE,
         data: null,
       };
@@ -140,7 +142,11 @@ exports.getMasterPermissionsTree = async () => {
     let masterPermissionTree = await redis.get('masterRolesTree');
 
     if (masterPermissionTree) {
-      return JSON.parse(masterPermissionTree);
+      return {
+        success: true,
+        data: JSON.parse(masterPermissionTree),
+        message: 'fetched master permission tree successfully',
+      };
     }
 
     masterPermissionTree = await this.addMasterPermissionsToCache();
@@ -150,7 +156,7 @@ exports.getMasterPermissionsTree = async () => {
       message: 'fetched master permission tree successfully',
     };
   } catch (err) {
-    logger.error(err.message);
+    logger.error('errrrr', err);
     return {
       success: false,
       data: null,
