@@ -10,7 +10,7 @@ const successResponse = ({
   data = {},
   code = statusCodes.STATUS_CODE_SUCCESS,
   message = '',
-}) => res.status(code).send({ code, message, data });
+}) => res.status(code).send({ data, code, message });
 
 const errorResponse = ({
   req,
@@ -20,20 +20,14 @@ const errorResponse = ({
   message = 'Internal server error',
   error = null,
 }) => {
-  code =
-    (error &&
-      ((error.error && error.error.code) || error.statusCode || error.code)) ||
-    code;
-  message =
-    message ||
-    (error && error.error && error.error.message) ||
-    (error && error.message) ||
-    '';
+  if (error) {
+    code = error.error?.code || error.code || error.statusCode || code;
+  }
 
   return res.status(code).send({
+    data,
     code,
     message,
-    data,
   });
 };
 
