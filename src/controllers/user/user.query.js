@@ -12,17 +12,17 @@ exports.getUserRoleId = `SELECT id
   WHERE user_id = :user_id AND role_id = :role_id
   `;
 
-exports.getListUsersQuery = (search_key, pageLimit, pageNumber) => {
+exports.getListUsersQuery = (search_key, page_limit, page_number) => {
   let querySearchCondition = ``;
   let queryPagination = ' ';
   if (search_key) {
     querySearchCondition = `WHERE usr.first_name ILIKE '%${search_key}%' OR usr.last_name ILIKE '%${search_key}%'`;
   }
-  if (pageNumber || pageLimit) {
-    queryPagination = `OFFSET((${parseInt(pageNumber || 1)}-1)*${parseInt(
-      pageLimit || 10,
+  if (page_number || page_limit) {
+    queryPagination = `OFFSET((${parseInt(page_number || 1)}-1)*${parseInt(
+      page_limit || 10,
     )})
-           ROWS FETCH NEXT ${parseInt(pageLimit || 10)} ROWS ONLY`;
+           ROWS FETCH NEXT ${parseInt(page_limit || 10)} ROWS ONLY`;
   }
   return `SELECT
   COUNT(*) OVER() AS data_count,

@@ -1,8 +1,8 @@
 const { statusCodes } = require('../../utils/statusCodes');
 const { logger } = require('../../utils/logger');
 const { errorResponse } = require('../../utils/responseHandler');
-const messages = require('./users.constants');
-const { validateDataInDBById } = require('./users.helper');
+const messages = require('./user.constants');
+const { validateDataInDBById } = require('./user.helper');
 const { dbTables } = require('../../utils/constants');
 
 exports.validateUserInput = async (req, res, next) => {
@@ -189,14 +189,14 @@ exports.validateUserUpdateInput = async (req, res, next) => {
 exports.validateGetUsersInput = async (req, res, next) => {
   let errorsList = [];
   try {
-    const { search, pageLimit, pageNumber } = req.query;
+    const { search, page_limit, page_number } = req.query;
     if (search && typeof search !== 'string') {
       errorsList.push(messages.errorMessages.INVAILD_SEARCH_KEY);
     }
-    if (!pageLimit || pageLimit < 0) {
+    if (!page_limit || page_limit < 0) {
       errorsList.push(messages.errorMessages.PAGE_LIMIT_MESSAGE);
     }
-    if (!pageNumber || pageNumber < 0) {
+    if (!page_number || page_number < 0) {
       errorsList.push(messages.errorMessages.PAGE_NUMBER_MESSAGE);
     }
     if (errorsList.length) {

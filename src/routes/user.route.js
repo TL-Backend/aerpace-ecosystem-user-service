@@ -2,12 +2,12 @@ const {
   addUser,
   editUser,
   getUsersList,
-} = require('../controllers/user/users.controller');
+} = require('../controllers/user/user.controller');
 const {
   validateUserInput,
   validateUserUpdateInput,
   validateGetUsersInput,
-} = require('../controllers/user/users.middleware');
+} = require('../controllers/user/user.middleware');
 
 module.exports = function (app) {
   app.post('/users', validateUserInput, addUser);

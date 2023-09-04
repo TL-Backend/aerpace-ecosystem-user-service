@@ -4,6 +4,7 @@ const {
   aergov_user_roles,
 } = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
 const { logger } = require('../../utils/logger');
+const { statusCodes } = require('../../utils/statusCodes');
 const {
   getDataById,
   getListUsersQuery,
@@ -26,6 +27,7 @@ exports.addUserHelper = async (user) => {
       transaction.commit();
       return {
         success: true,
+        message: 'User added successfully',
         data: userData,
       };
     }
@@ -33,8 +35,10 @@ exports.addUserHelper = async (user) => {
     logger.error(err);
     transaction.rollback();
     return {
-      data: err,
       success: false,
+      errorCode: statusCodes.STATUS_CODE_FAILURE,
+      message: 'Error while creating user',
+      data: null,
     };
   }
 };
@@ -82,6 +86,7 @@ exports.editUserHelper = async (user, id) => {
       transaction.commit();
       return {
         success: true,
+        message: 'User data edited successfully',
         data: userData,
       };
     }
@@ -89,8 +94,10 @@ exports.editUserHelper = async (user, id) => {
     logger.error(err);
     transaction.rollback();
     return {
-      data: err,
       success: false,
+      errorCode: statusCodes.STATUS_CODE_FAILURE,
+      message: 'Error while modifying user',
+      data: null,
     };
   }
 };
@@ -103,38 +110,45 @@ exports.validateDataInDBById = async (id_key, table) => {
       type: sequelize.QueryTypes.SELECT,
     });
     return {
-      data: data[0],
       success: true,
+      message: 'Data fetched sucessfully',
+      data: data[0],
     };
   } catch (err) {
     logger.error(err);
     return {
-      data: err,
       success: false,
+      errorCode: statusCodes.STATUS_CODE_FAILURE,
+      message: 'Error while fetching data',
+      data: null,
     };
   }
 };
 
-exports.getUsersListHelper = async (search_key, pageLimit, pageNumber) => {
+exports.getUsersListHelper = async (search_key, page_limit, page_number) => {
   try {
-    const query = getListUsersQuery(search_key, pageLimit, pageNumber);
+    const query = getListUsersQuery(search_key, page_limit, page_number);
     const data = await sequelize.query(query);
+    let totalPages = Math.round(
+      parseInt(data[0][0]?.data_count || 0) / page_limit,
+    );
     return {
       success: true,
       data: {
         users: data[0],
-        pageLimit: parseInt(pageLimit) || 10,
-        pageNumber: parseInt(pageNumber) || 1,
-        totalPages: Math.round(
-          parseInt(data[0][0]?.data_count || 0) / pageLimit,
-        ),
+        page_limit: parseInt(page_limit) || 10,
+        page_number: parseInt(page_number) || 1,
+        totalPages: totalPages !== 0 ? totalPages : 1,
       },
+      message: 'List fetched successfully',
     };
   } catch (err) {
     logger.error(err);
     return {
       success: false,
-      data: err,
+      errorCode: statusCodes.STATUS_CODE_FAILURE,
+      message: 'Error while listing users',
+      data: null,
     };
   }
 };
