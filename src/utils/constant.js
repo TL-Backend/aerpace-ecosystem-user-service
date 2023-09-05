@@ -4,7 +4,6 @@ exports.dbTables = {
   FEATURES_TABLE: 'aergov_page_features',
 };
 
-
 exports.redisDb = {
-  MASTER_ROLES_TREE: `masterRolesTree`
-}
+  MASTER_ROLES_TREE: `masterRolesTree`,
+};

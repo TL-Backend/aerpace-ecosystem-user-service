@@ -125,7 +125,7 @@ exports.addMasterPermissionsToCache = async () => {
       return {
         success: false,
         data: null,
-        message:errorResponses.PAGES_OR_FEATURES_NOT_FOUND
+        message: errorResponses.PAGES_OR_FEATURES_NOT_FOUND,
       };
     }
 
@@ -172,7 +172,7 @@ exports.getMasterPermissionsTree = async () => {
     return {
       success: true,
       data: JSON.parse(data),
-      message: successResponses.PERMISSION_TREE_FETCHED
+      message: successResponses.PERMISSION_TREE_FETCHED,
     };
   } catch (err) {
     return {
