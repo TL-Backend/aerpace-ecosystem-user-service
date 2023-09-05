@@ -7,9 +7,17 @@ const {
 const { hashPassword, verifyPassword } = require('../../utils/passwordHandler');
 const { logger } = require('../../utils/logger');
 const { statusCodes } = require('../../utils/statusCode');
-const { successResponses, errorResponses } = require('./auth.constant');
+const {
+  successResponses,
+  errorResponses,
+  appType,
+  userType,
+} = require('./auth.constant');
 const { queries } = require('./auth.query');
 const jwt = require('jsonwebtoken');
+const {
+  constants,
+} = require('../../services/aerpace-ecosystem-backend-db/src/commons/constant');
 
 exports.decodeRefreshToken = ({ refreshToken }) => {
   try {
@@ -40,24 +48,28 @@ exports.decodeRefreshToken = ({ refreshToken }) => {
   }
 };
 
-exports.getUserWithRoleDetails = async ({ email }) => {
+exports.getValidUserWithRoleDetails = async ({ email, app }) => {
   try {
     const userRolesData = await sequelize.query(queries.getUser, {
       replacements: { email },
       type: sequelize.QueryTypes.SELECT,
     });
-    if (!userRolesData[0]) {
+    if (
+      userRolesData[0] &&
+      app.toLowerCase() == appType.ADMIN_PORTAL &&
+      userRolesData[0].user_type == userType.USER
+    ) {
       return {
-        success: false,
-        errorCode: statusCodes.STATUS_CODE_DATA_NOT_FOUND,
-        message: errorResponses.EMAIL_INVALID,
-        data: null,
+        success: true,
+        message: successResponses.DATA_FETCH_SUCCESSFULL,
+        data: userRolesData[0],
       };
     }
     return {
-      success: true,
-      message: successResponses.DATA_FETCH_SUCCESSFULL,
-      data: userRolesData[0],
+      success: false,
+      errorCode: statusCodes.STATUS_CODE_UNAUTHORIZED,
+      message: errorResponses.INVALID_EMAIL_USERTYPE_COMBINATION,
+      data: null,
     };
   } catch (err) {
     logger.error(err.message);

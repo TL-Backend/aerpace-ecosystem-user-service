@@ -36,7 +36,7 @@ exports.sendEmail = async ({ email, resetUuid }) => {
     Source: this.emailConstants.FROM_EMAIL,
     ReplyToAddresses: [this.emailConstants.REPLY_TO_EMAIL],
   };
-  await mailService({ params });
+  await this.mailService({ params });
 };
 
 exports.sendTemporaryPasswordEmail = async ({ email, temporaryPassword }) => {

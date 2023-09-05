@@ -11,6 +11,8 @@ exports.successResponses = {
 exports.errorResponses = {
   healthCheckError: 'Service unavailable',
   EMAIL_INVALID: 'Invalid email or user not found',
+  INVALID_EMAIL_USERTYPE_COMBINATION:
+    'Invalid email and user type combination or user not found',
   TOKEN_INVALID: 'token invalid',
   INVALID_REFRESH_TOKEN: 'invalid refresh token',
   TOKEN_EXPIRED: 'Token expired',
@@ -21,5 +23,14 @@ exports.errorResponses = {
   UUID_INVALID: 'Invalid UUID',
   USER_NOT_FOUND: 'user details not found',
   INVALID_RESET_LINK: 'Invalid Reset link',
+  INVALID_APP_TYPE: 'invalid app type',
   PASSWORD_INVALID: 'password invalid or empty',
+};
+
+exports.appType = {
+  ADMIN_PORTAL: 'admin_portal',
+};
+
+exports.userType = {
+  USER: 'user',
 };

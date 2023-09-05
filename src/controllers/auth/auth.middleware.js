@@ -2,16 +2,22 @@ const { errorResponse } = require('../../utils/responseHandler');
 const { statusCodes } = require('../../utils/statusCode');
 const { errorResponses } = require('./auth.constant');
 const { logger } = require('../../utils/logger');
+const {
+  constants,
+} = require('../../services/aerpace-ecosystem-backend-db/src/commons/constant');
 
 exports.loginValidation = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, app } = req.body;
     const errorsList = [];
     if (!email || typeof email !== 'string') {
       errorsList.push(errorResponses.EMAIL_INVALID);
     }
     if (!password || typeof password !== 'string') {
       errorsList.push(errorResponses.PASSWORD_INVALID);
+    }
+    if (!constants.APP_TYPES.includes(app)) {
+      errorsList.push(errorResponses.INVALID_APP_TYPE);
     }
     if (errorsList.length) {
       throw errorsList.join();

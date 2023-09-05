@@ -13,23 +13,23 @@ const {
   createPasswordResetEntry,
   getUser,
   changeUserPassword,
-  getUserWithRoleDetails,
   getResetData,
   checkResetValidity,
   decodeRefreshToken,
+  getValidUserWithRoleDetails,
 } = require('./auth.helper');
 const { sendEmail } = require('../../utils/emailSender');
 
 exports.login = async (req, res, next) => {
   try {
-    let { email, password: enteredPassword } = req.body;
+    let { email, password: enteredPassword, app } = req.body;
     email = email.trim();
     const {
       success,
       errorCode,
       message,
       data: userData,
-    } = await getUserWithRoleDetails({ email });
+    } = await getValidUserWithRoleDetails({ email, app });
     if (!success) {
       return errorResponse({
         req,
