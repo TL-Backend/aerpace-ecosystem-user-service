@@ -4,7 +4,7 @@ const {
   aergov_user_roles,
 } = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
 const { logger } = require('../../utils/logger');
-const { statusCodes } = require('../../utils/statusCodes');
+const { statusCodes } = require('../../utils/statusCode');
 const {
   getDataById,
   getListUsersQuery,
@@ -14,7 +14,7 @@ const {
 exports.addUserHelper = async (user) => {
   const transaction = await sequelize.transaction();
   try {
-    if (!user.user_type) user.user_type = 'USER';
+    if (!user.user_type) user.user_type = 'USER' + user.email;
     const userData = await aergov_users.create(user, { transaction });
     if (userData) {
       await aergov_user_roles.create(
@@ -140,7 +140,7 @@ exports.getUsersListHelper = async (search_key, page_limit, page_number) => {
         page_number: parseInt(page_number) || 1,
         totalPages: totalPages !== 0 ? totalPages : 1,
       },
-      message: 'List fetched successfully',
+      message: 'User list fetched successfully',
     };
   } catch (err) {
     logger.error(err);

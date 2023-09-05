@@ -1,4 +1,7 @@
-const { dbTables } = require('../../utils/constants');
+const { dbTables } = require('../../utils/constant');
+const {
+  getPaginationQuery,
+} = require('../../services/aerpace-ecosystem-backend-db/src/commons/common.query');
 
 exports.getDataById = (table) => {
   return `SELECT *
@@ -12,18 +15,13 @@ exports.getUserRoleId = `SELECT id
   WHERE user_id = :user_id AND role_id = :role_id
   `;
 
-exports.getListUsersQuery = (search_key, page_limit, page_number) => {
+exports.getListUsersQuery = (search_key, pageLimit, pageNumber) => {
   let querySearchCondition = ``;
   let queryPagination = ' ';
   if (search_key) {
     querySearchCondition = `WHERE usr.first_name ILIKE '%${search_key}%' OR usr.last_name ILIKE '%${search_key}%'`;
   }
-  if (page_number || page_limit) {
-    queryPagination = `OFFSET((${parseInt(page_number || 1)}-1)*${parseInt(
-      page_limit || 10,
-    )})
-           ROWS FETCH NEXT ${parseInt(page_limit || 10)} ROWS ONLY`;
-  }
+  queryPagination = getPaginationQuery({ pageLimit, pageNumber });
   return `SELECT
   COUNT(*) OVER() AS data_count,
   usr.id AS user_id,

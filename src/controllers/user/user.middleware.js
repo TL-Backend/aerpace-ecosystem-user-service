@@ -1,9 +1,9 @@
-const { statusCodes } = require('../../utils/statusCodes');
+const { statusCodes } = require('../../utils/statusCode');
 const { logger } = require('../../utils/logger');
 const { errorResponse } = require('../../utils/responseHandler');
-const messages = require('./user.constants');
+const messages = require('./user.constant');
 const { validateDataInDBById } = require('./user.helper');
-const { dbTables } = require('../../utils/constants');
+const { dbTables } = require('../../utils/constant');
 
 exports.validateUserInput = async (req, res, next) => {
   try {

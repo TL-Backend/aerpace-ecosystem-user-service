@@ -7,9 +7,9 @@ const {
   editUserHelper,
   getUsersListHelper,
 } = require('./user.helper');
-const { statusCodes } = require('../../utils/statusCodes');
+const { statusCodes } = require('../../utils/statusCode');
 const { logger } = require('../../utils/logger');
-const messages = require('./user.constants');
+const messages = require('./user.constant');
 
 exports.addUser = async (req, res) => {
   try {
