@@ -154,7 +154,7 @@ exports.validateUserUpdateInput = async (req, res, next) => {
     ) {
       errorsList.push(messages.errorMessages.INVALID_ROLE_FOUND);
     }
-    if (role_id && role_id.startsWith('r')) {
+    if (role_id.startsWith('r')) {
       const role = await validateDataInDBById(role_id, dbTables.ROLES_TABLE);
       if (!role.data || !role.success) {
         errorsList.push(messages.errorMessages.NO_ROLE_FOUND);
