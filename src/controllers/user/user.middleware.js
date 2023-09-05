@@ -56,11 +56,11 @@ exports.validateUserInput = async (req, res, next) => {
     if (
       !role_id?.trim() ||
       typeof role_id !== 'string' ||
-      !role_id.startsWith('r')
+      !role_id?.startsWith('r')
     ) {
       errorsList.push(messages.errorMessages.INVALID_ROLE_FOUND);
     }
-    if (role_id.startsWith('r')) {
+    if (role_id?.startsWith('r')) {
       const role = await validateDataInDBById(role_id, dbTables.ROLES_TABLE);
       if (!role.data || !role.success) {
         errorsList.push(messages.errorMessages.NO_ROLE_FOUND);
@@ -150,11 +150,11 @@ exports.validateUserUpdateInput = async (req, res, next) => {
       role_id &&
       (!role_id?.trim() ||
         typeof role_id !== 'string' ||
-        !role_id.startsWith('r'))
+        !role_id?.startsWith('r'))
     ) {
       errorsList.push(messages.errorMessages.INVALID_ROLE_FOUND);
     }
-    if (role_id.startsWith('r')) {
+    if (role_id?.startsWith('r')) {
       const role = await validateDataInDBById(role_id, dbTables.ROLES_TABLE);
       if (!role.data || !role.success) {
         errorsList.push(messages.errorMessages.NO_ROLE_FOUND);
