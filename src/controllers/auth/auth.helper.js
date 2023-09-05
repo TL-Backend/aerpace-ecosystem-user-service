@@ -4,20 +4,17 @@ const {
   aergov_reset_tokens,
   sequelize,
 } = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
-const {
-  hashPassword,
-  verifyPassword,
-} = require('../../utils/password-handling.util');
+const { hashPassword, verifyPassword } = require('../../utils/passwordHandler');
 const { logger } = require('../../utils/logger');
-const { statusCodes } = require('../../utils/statusCodes');
+const { statusCodes } = require('../../utils/statusCode');
 const { successResponses, errorResponses } = require('./auth.constant');
-const { queries } = require('./auth.querie');
+const { queries } = require('./auth.query');
 const jwt = require('jsonwebtoken');
 
-exports.decodeToken = ({ authorization }) => {
+exports.decodeRefreshToken = ({ refreshToken }) => {
   try {
     const decodedToken = jwt.verify(
-      JSON.parse(authorization),
+      JSON.parse(refreshToken),
       process.env.SECURITY_KEY,
     );
     if (decodedToken.token_type !== 'REFRESH_TOKEN') {
@@ -25,14 +22,6 @@ exports.decodeToken = ({ authorization }) => {
         success: false,
         errorCode: statusCodes.STATUS_CODE_UNAUTHORIZED,
         message: errorResponses.INVALID_REFRESH_TOKEN,
-      };
-    }
-    const tokenExpiration = moment.unix(decodedToken.exp);
-    if (moment().isAfter(tokenExpiration)) {
-      return {
-        success: false,
-        errorCode: statusCodes.STATUS_CODE_UNAUTHORIZED,
-        message: errorResponses.TOKEN_EXPIRED,
       };
     }
     return {
@@ -97,6 +86,7 @@ exports.getUser = async ({ where, options = {}, attributes = {} }) => {
         success: false,
         errorCode: statusCodes.STATUS_CODE_DATA_NOT_FOUND,
         message: errorResponses.USER_NOT_FOUND,
+        data: null,
       };
     }
     return {
@@ -207,7 +197,7 @@ exports.changeUserPassword = async ({
     if (isPasswordUsed) {
       return {
         success: false,
-        code: statusCodes.STATUS_CODE_UNAUTHORIZED,
+        errorCode: statusCodes.STATUS_CODE_UNAUTHORIZED,
         message: errorResponses.SAME_PASSWORD_USED_ERROR,
         data: null,
       };

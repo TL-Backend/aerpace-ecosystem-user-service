@@ -19,6 +19,6 @@ exports.hashPassword = async ({ password }) => {
 };
 
 exports.verifyPassword = async ({ enteredPassword, password }) => {
-  const isPasswordVerified = await bcrypt.compare(enteredPassword, password);
-  return isPasswordVerified;
+  const isPasswordValid = await bcrypt.compare(enteredPassword, password);
+  return isPasswordValid;
 };

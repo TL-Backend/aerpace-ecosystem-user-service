@@ -3,11 +3,11 @@ const {
   errorResponse,
 } = require('../../utils/responseHandler');
 
-const { statusCodes } = require('../../utils/statusCodes');
+const { statusCodes } = require('../../utils/statusCode');
 const { logger } = require('../../utils/logger');
-const { verifyPassword } = require('../../utils/password-handling.util');
+const { verifyPassword } = require('../../utils/passwordHandler');
 const { generateTokens } = require('./auth.util');
-const { expirationTime } = require('../../utils/constants');
+const { expirationTime } = require('../../utils/constant');
 const { successResponses, errorResponses } = require('./auth.constant');
 const {
   createPasswordResetEntry,
@@ -16,9 +16,9 @@ const {
   getUserWithRoleDetails,
   getResetData,
   checkResetValidity,
-  decodeToken,
+  decodeRefreshToken,
 } = require('./auth.helper');
-const { sendEmail } = require('../../utils/email-sender');
+const { sendEmail } = require('../../utils/emailSender');
 
 exports.login = async (req, res, next) => {
   try {
@@ -32,6 +32,7 @@ exports.login = async (req, res, next) => {
     } = await getUserWithRoleDetails({ email });
     if (!success) {
       return errorResponse({
+        req,
         res,
         code: errorCode,
         message,
@@ -48,11 +49,11 @@ exports.login = async (req, res, next) => {
       profile_url,
       first_time_login,
     } = userData;
-    const isPasswordVerified = await verifyPassword({
+    const isPasswordValid = await verifyPassword({
       enteredPassword,
       password,
     });
-    if (isPasswordVerified) {
+    if (isPasswordValid) {
       const idToken = generateTokens({
         payload: { user_id, role_id, token_type: 'ID_TOKEN' },
         expiresIn: expirationTime.ID_TOKEN,
@@ -61,7 +62,7 @@ exports.login = async (req, res, next) => {
         payload: { user_id, token_type: 'REFRESH_TOKEN' },
         expiresIn: expirationTime.REFRESH_TOKEN,
       });
-      const profile_data = {
+      const profile = {
         first_name,
         last_name,
         email,
@@ -79,11 +80,12 @@ exports.login = async (req, res, next) => {
         data: {
           idToken,
           refreshToken,
-          profile: profile_data,
+          profile,
         },
       });
     }
     return errorResponse({
+      req,
       res,
       code: statusCodes.STATUS_CODE_UNAUTHORIZED,
       message: errorResponses.AUTHENTICATION_ERROR,
@@ -91,9 +93,10 @@ exports.login = async (req, res, next) => {
   } catch (err) {
     logger.error(err.message);
     return errorResponse({
+      req,
       res,
       code: statusCodes.STATUS_CODE_FAILURE,
-      error: err,
+      message: err.message,
     });
   }
 };
@@ -110,6 +113,7 @@ exports.forgotPassword = async (req, res, next) => {
     } = await getUser({ where: { email } });
     if (!getUserSuccess) {
       return errorResponse({
+        req,
         res,
         code: getUserErrorCode,
         message: getUserMessage,
@@ -119,16 +123,17 @@ exports.forgotPassword = async (req, res, next) => {
       success,
       errorCode,
       message,
-      data: reset_uuid,
+      data: resetUuid,
     } = await createPasswordResetEntry({ userData });
     if (!success) {
       return errorResponse({
+        req,
         res,
         code: errorCode,
         message,
       });
     }
-    await sendEmail({ email, resetUuid: reset_uuid });
+    await sendEmail({ email, resetUuid });
     return successResponse({
       res,
       message: successResponses.RESET_LINK_SENT,
@@ -137,9 +142,10 @@ exports.forgotPassword = async (req, res, next) => {
   } catch (err) {
     logger.error(err.message);
     return errorResponse({
+      req,
       res,
       code: statusCodes.STATUS_CODE_FAILURE,
-      error: err,
+      message: err.message,
     });
   }
 };
@@ -156,6 +162,7 @@ exports.resetPassword = async (req, res, next) => {
     } = await getResetData({ where: { uuid }, options: { raw: false } });
     if (!resetSuccess) {
       return errorResponse({
+        req,
         res,
         code: resetErrorCode,
         message: resetStatusMessage,
@@ -166,6 +173,7 @@ exports.resetPassword = async (req, res, next) => {
     });
     if (!success) {
       return errorResponse({
+        req,
         res,
         code: errorCode,
         message: message,
@@ -182,6 +190,7 @@ exports.resetPassword = async (req, res, next) => {
     });
     if (!getUserSuccess) {
       return errorResponse({
+        req,
         res,
         code: getUserErrorCode,
         message: getUserMessage,
@@ -197,6 +206,7 @@ exports.resetPassword = async (req, res, next) => {
     });
     if (!changePasswordSuccessStatus) {
       return errorResponse({
+        req,
         res,
         code: changePasswordCode,
         message: changePasswordMessage,
@@ -214,24 +224,26 @@ exports.resetPassword = async (req, res, next) => {
   } catch (err) {
     logger.error(err.message);
     return errorResponse({
+      req,
       res,
       code: statusCodes.STATUS_CODE_FAILURE,
-      error: err,
+      message: err.message,
     });
   }
 };
 
 exports.getAccessTokenWithRefresh = async (req, res, next) => {
   try {
-    const authorization = req.headers.authorization;
+    const refreshToken = req.headers.authorization;
     const {
       success,
       errorCode,
       message,
       data: decodedToken,
-    } = decodeToken({ authorization });
+    } = decodeRefreshToken({ refreshToken });
     if (!success) {
       return errorResponse({
+        req,
         res,
         code: errorCode,
         message,
@@ -254,9 +266,10 @@ exports.getAccessTokenWithRefresh = async (req, res, next) => {
   } catch (err) {
     logger.error(err);
     return errorResponse({
+      req,
       res,
       code: statusCodes.STATUS_CODE_FAILURE,
-      error: err,
+      message: err.message,
     });
   }
 };

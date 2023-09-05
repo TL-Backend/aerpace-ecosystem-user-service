@@ -1,4 +1,4 @@
-const { dbTables } = require('../../utils/constants');
+const { dbTables } = require('../../utils/constant');
 
 const queries = {
   getUser: `SELECT *

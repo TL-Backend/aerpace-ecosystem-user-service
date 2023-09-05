@@ -1,8 +1,6 @@
 const { errorResponse } = require('../../utils/responseHandler');
-const { statusCodes } = require('../../utils/statusCodes');
+const { statusCodes } = require('../../utils/statusCode');
 const { errorResponses } = require('./auth.constant');
-const jwt = require('jsonwebtoken');
-const moment = require('moment');
 const { logger } = require('../../utils/logger');
 
 exports.loginValidation = async (req, res, next) => {
@@ -84,8 +82,8 @@ exports.resetPasswordValidations = async (req, res, next) => {
 exports.refreshTokenValidation = async (req, res, next) => {
   try {
     const errorsList = [];
-    const authorization = req.headers.authorization;
-    if (!authorization) {
+    const refreshToken = req.headers.authorization;
+    if (!refreshToken) {
       errorsList.push(errorResponses.TOKEN_INVALID);
     }
     if (errorsList.length) {

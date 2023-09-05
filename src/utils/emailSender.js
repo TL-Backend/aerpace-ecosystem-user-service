@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 require('dotenv').config();
 
-const mailService = async ({ params }) => {
+exports.mailService = async ({ params }) => {
   AWS.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_KEY_ID,
@@ -11,9 +11,9 @@ const mailService = async ({ params }) => {
   await ses.sendEmail(params).promise();
 };
 
-const sendEmail = async ({ email, resetUuid }) => {
-  const resetLink = `https://example.com/reset-password?uuid=${resetUuid}`;
-  const emailContent = emailConstants.RESET_LINK_EMAIL_CONTENT.replace(
+exports.sendEmail = async ({ email, resetUuid }) => {
+  const resetLink = `https://${process.env.URL}/reset-password?uuid=${resetUuid}`;
+  const emailContent = this.emailConstants.RESET_LINK_EMAIL_CONTENT.replace(
     '$resetLink',
     `${resetLink}`,
   );
@@ -30,20 +30,21 @@ const sendEmail = async ({ email, resetUuid }) => {
       },
       Subject: {
         Charset: 'UTF-8',
-        Data: emailConstants.SUBJECT,
+        Data: this.emailConstants.SUBJECT,
       },
     },
-    Source: emailConstants.FROM_EMAIL,
-    ReplyToAddresses: [emailConstants.REPLY_TO_EMAIL],
+    Source: this.emailConstants.FROM_EMAIL,
+    ReplyToAddresses: [this.emailConstants.REPLY_TO_EMAIL],
   };
   await mailService({ params });
 };
 
-const sendTemporaryPasswordEmail = async ({ email, temporaryPassword }) => {
-  const emailContent = emailConstants.TEMPORARY_PASSWORD_EMAIL_CONTENT.replace(
-    '{temporaryPassword}',
-    temporaryPassword,
-  );
+exports.sendTemporaryPasswordEmail = async ({ email, temporaryPassword }) => {
+  const emailContent =
+    this.emailConstants.TEMPORARY_PASSWORD_EMAIL_CONTENT.replace(
+      '{temporaryPassword}',
+      temporaryPassword,
+    );
   const params = {
     Destination: {
       ToAddresses: [email],
@@ -57,16 +58,16 @@ const sendTemporaryPasswordEmail = async ({ email, temporaryPassword }) => {
       },
       Subject: {
         Charset: 'UTF-8',
-        Data: emailConstants.SUBJECT,
+        Data: this.emailConstants.SUBJECT,
       },
     },
-    Source: emailConstants.FROM_EMAIL,
-    ReplyToAddresses: [emailConstants.REPLY_TO_EMAIL],
+    Source: this.emailConstants.FROM_EMAIL,
+    ReplyToAddresses: [this.emailConstants.REPLY_TO_EMAIL],
   };
   await mailService({ params });
 };
 
-const emailConstants = {
+exports.emailConstants = {
   FROM_EMAIL: 'jayasrisadaram2002@gmail.com',
   REPLY_TO_EMAIL: 'jayasrisadaram2002@gmail.com',
   SUBJECT: 'Welcome to aerpace - Temporary Password',
@@ -90,9 +91,4 @@ const emailConstants = {
     <p>Best regards,</p> 
     <p>-aerpace</p>
     `,
-};
-
-module.exports = {
-  sendTemporaryPasswordEmail,
-  sendEmail,
 };

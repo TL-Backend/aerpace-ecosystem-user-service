@@ -11,13 +11,21 @@ const {
   refreshTokenValidation,
 } = require('../controllers/auth/auth.middleware');
 
-module.exports = function (app) {
-  app.post('/auth/login', loginValidation, login);
-  app.post('/auth/forgot-password', forgotPasswordValidations, forgotPassword);
-  app.post(
+module.exports = function (router) {
+  router.post('/auth/login', loginValidation, login);
+  router.post(
+    '/auth/forgot-password',
+    forgotPasswordValidations,
+    forgotPassword,
+  );
+  router.post(
     '/auth/reset-password/:uuid',
     resetPasswordValidations,
     resetPassword,
   );
-  app.get('/auth/refresh', refreshTokenValidation, getAccessTokenWithRefresh);
+  router.get(
+    '/auth/refresh',
+    refreshTokenValidation,
+    getAccessTokenWithRefresh,
+  );
 };
