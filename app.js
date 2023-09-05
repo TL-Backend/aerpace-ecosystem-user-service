@@ -5,7 +5,7 @@ const express = require('express');
 const app = express();
 
 const { errorResponse } = require('./src/utils/responseHandler');
-const { statusCodes } = require('./src/utils/statusCodes');
+const { statusCodes } = require('./src/utils/statusCode');
 const { router } = require('./src/routes/index');
 const {
   addMasterPermissionsToCache,

@@ -2,8 +2,9 @@ const {
   sequelize,
   aergov_roles,
 } = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
+const { redisDb } = require('../../utils/constant');
 const { logger } = require('../../utils/logger');
-const { statusCodes } = require('../../utils/statusCodes');
+const { statusCodes } = require('../../utils/statusCode');
 const { errorResponses, successResponses } = require('./role.constant');
 const {
   listRolesQuery,
@@ -72,9 +73,8 @@ exports.addRole = async (params) => {
     }
 
     const { success, data, message } = await this.getMasterPermissionsTree();
-    console.log('data---', data);
+
     if (!success) {
-      console.log('err', message);
       return {
         success: false,
         message: message || 'failed to fetch master permission tree',
@@ -122,41 +122,59 @@ exports.addMasterPermissionsToCache = async () => {
       });
 
     if (pagesAndFeatures.pages === null || pagesAndFeatures.features === null) {
-      return false;
+      return {
+        success: false,
+        data: null,
+        message:errorResponses.PAGES_OR_FEATURES_NOT_FOUND
+      };
     }
 
     const masterRolesData =
       this.pagesAndFeaturesToMasterPermissionTree(pagesAndFeatures);
     logger.info(`masterRolesData = ${masterRolesData}`);
-    await redis.set('masterRolesTree', JSON.stringify(masterRolesData));
+    await redis.set(redisDb.MASTER_ROLES_TREE, JSON.stringify(masterRolesData));
 
-    return masterRolesData;
+    return {
+      success: false,
+      data: masterRolesData,
+      message: errorResponses.PAGES_OR_FEATURES_NOT_FOUND,
+    };
   } catch (err) {
     logger.error(err.message);
-    return {};
+    return {
+      success: false,
+      data: null,
+      message: err.message,
+    };
   }
 };
 
 exports.getMasterPermissionsTree = async () => {
   try {
-    let masterPermissionTree = await redis.get('masterRolesTree');
+    let masterPermissionTree = await redis.get(redisDb.MASTER_ROLES_TREE);
 
     if (masterPermissionTree) {
       return {
         success: true,
         data: JSON.parse(masterPermissionTree),
-        message: 'fetched master permission tree successfully',
       };
     }
 
-    masterPermissionTree = await this.addMasterPermissionsToCache();
+    const { success, message, data, errorCode } =
+      await this.addMasterPermissionsToCache();
+    if (!success) {
+      return {
+        success: false,
+        data: null,
+        message: message,
+      };
+    }
     return {
       success: true,
-      data: JSON.parse(masterPermissionTree),
-      message: 'fetched master permission tree successfully',
+      data: JSON.parse(data),
+      message: successResponses.PERMISSION_TREE_FETCHED
     };
   } catch (err) {
-    logger.error('errrrr', err);
     return {
       success: false,
       data: null,

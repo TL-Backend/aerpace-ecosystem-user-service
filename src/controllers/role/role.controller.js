@@ -3,7 +3,7 @@ const {
   errorResponse,
 } = require('../../utils/responseHandler');
 const { listRolesHelper, addRole } = require('./role.helper');
-const { statusCodes } = require('../../utils/statusCodes');
+const { statusCodes } = require('../../utils/statusCode');
 const { logger } = require('../../utils/logger');
 const { errorResponses } = require('./role.constant');
 

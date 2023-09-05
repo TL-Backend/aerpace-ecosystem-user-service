@@ -1,7 +1,7 @@
 const { errorResponses } = require('./role.constant');
 const { logger } = require('../../utils/logger');
 const { errorResponse } = require('../../utils/responseHandler');
-const { statusCodes } = require('../../utils/statusCodes');
+const { statusCodes } = require('../../utils/statusCode');
 
 exports.validateRoleInput = async (req, res, next) => {
   try {

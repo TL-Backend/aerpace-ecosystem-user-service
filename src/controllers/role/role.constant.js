@@ -1,6 +1,7 @@
 exports.successResponses = {
   ROLE_CREATED: 'Role created successfully',
   ROLES_FETCHED: `Roles fetched successfully`,
+  PERMISSION_TREE_FETCHED:`fetched master permission tree successfully`,
 };
 
 exports.errorResponses = {
