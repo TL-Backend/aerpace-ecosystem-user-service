@@ -28,7 +28,7 @@ exports.errorResponses = {
 };
 
 exports.appType = {
-  ADMIN_PORTAL: 'admin_portal',
+  ADMIN_PORTAL: 'ADMIN_PORTAL',
 };
 
 exports.userType = {

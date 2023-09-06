@@ -31,12 +31,7 @@ exports.login = async (req, res, next) => {
       data: userData,
     } = await getValidUserWithRoleDetails({ email, app });
     if (!success) {
-      return errorResponse({
-        req,
-        res,
-        code: errorCode,
-        message,
-      });
+      return errorResponse({ req, res, code: errorCode, message });
     }
     const {
       password,

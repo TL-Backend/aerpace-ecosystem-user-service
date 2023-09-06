@@ -56,7 +56,7 @@ exports.getValidUserWithRoleDetails = async ({ email, app }) => {
     });
     if (
       userRolesData[0] &&
-      app.toLowerCase() == appType.ADMIN_PORTAL &&
+      app == appType.ADMIN_PORTAL &&
       userRolesData[0].user_type == userType.USER
     ) {
       return {
