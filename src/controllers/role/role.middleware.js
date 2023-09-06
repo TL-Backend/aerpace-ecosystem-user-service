@@ -28,7 +28,7 @@ exports.validateRoleInput = async (req, res, next) => {
         }
       });
 
-      if (errors.length > 0) {
+      if (errors.length) {
         errorsList.push(
           errorResponses.INVALID_STRING_OR_MISSING_ERROR('permission'),
         );

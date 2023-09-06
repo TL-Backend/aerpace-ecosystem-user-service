@@ -2,7 +2,7 @@ const {
   sequelize,
   aergov_roles,
 } = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
-const { RedisKeys: redisDb } = require('../../utils/constant');
+const { redisKeys } = require('../../utils/constant');
 const { logger } = require('../../utils/logger');
 const { statusCodes } = require('../../utils/statusCode');
 const { errorResponses, successResponses } = require('./role.constant');
@@ -131,7 +131,7 @@ exports.addMasterPermissionsToCache = async () => {
       pagesAndFeatures[0][0],
     );
 
-    await redis.set(redisDb.MASTER_ROLES_TREE, JSON.stringify(masterRolesData));
+    await redis.set(redisKeys.MASTER_ROLES_TREE, JSON.stringify(masterRolesData));
 
     return {
       success: true,
@@ -150,7 +150,7 @@ exports.addMasterPermissionsToCache = async () => {
 
 exports.getMasterPermissionsTree = async () => {
   try {
-    let masterPermissionTree = await redis.get(redisDb.MASTER_ROLES_TREE);
+    let masterPermissionTree = await redis.get(redisKeys.MASTER_ROLES_TREE);
 
     if (masterPermissionTree) {
       return {
