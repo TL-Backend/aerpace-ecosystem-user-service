@@ -59,8 +59,7 @@ exports.validateUserInput = async (req, res, next) => {
       !role_id?.startsWith('r')
     ) {
       errorsList.push(messages.errorMessages.INVALID_ROLE_FOUND);
-    }
-    if (role_id?.startsWith('r')) {
+    } else {
       const role = await validateDataInDBById(role_id, dbTables.ROLES_TABLE);
       if (!role.data || !role.success) {
         errorsList.push(messages.errorMessages.NO_ROLE_FOUND);
@@ -82,6 +81,7 @@ exports.validateUserInput = async (req, res, next) => {
     return next();
   } catch (error) {
     logger.error(error);
+    console.log('type of error', typeof error);
     return errorResponse({
       req,
       res,
@@ -108,8 +108,7 @@ exports.validateUserUpdateInput = async (req, res, next) => {
     const errorsList = [];
     if (!id?.trim() || typeof id !== 'string' || !id.startsWith('u')) {
       errorsList.push(messages.errorMessages.INVAILD_USER_ID_MESSAGE);
-    }
-    if (id.startsWith('u')) {
+    } else {
       const user = await validateDataInDBById(id, dbTables.USERS_TABLE);
       if (!user.data || !user.success) {
         errorsList.push(messages.errorMessages.INVAILD_USER_ID_MESSAGE);
@@ -153,8 +152,7 @@ exports.validateUserUpdateInput = async (req, res, next) => {
         !role_id?.startsWith('r'))
     ) {
       errorsList.push(messages.errorMessages.INVALID_ROLE_FOUND);
-    }
-    if (role_id?.startsWith('r')) {
+    } else {
       const role = await validateDataInDBById(role_id, dbTables.ROLES_TABLE);
       if (!role.data || !role.success) {
         errorsList.push(messages.errorMessages.NO_ROLE_FOUND);
@@ -176,6 +174,7 @@ exports.validateUserUpdateInput = async (req, res, next) => {
     return next();
   } catch (error) {
     logger.error(error);
+    console.log('type of error', typeof error);
     return errorResponse({
       req,
       res,

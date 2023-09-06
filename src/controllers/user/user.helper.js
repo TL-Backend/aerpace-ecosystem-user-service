@@ -14,7 +14,7 @@ const {
 exports.addUserHelper = async (user) => {
   const transaction = await sequelize.transaction();
   try {
-    if (!user.user_type) user.user_type = 'USER' + user.email;
+    if (!user.user_type) user.user_type = 'USER';
     const userData = await aergov_users.create(user, { transaction });
     if (userData) {
       await aergov_user_roles.create(
@@ -138,7 +138,7 @@ exports.getUsersListHelper = async (search_key, page_limit, page_number) => {
         users: data[0],
         page_limit: parseInt(page_limit) || 10,
         page_number: parseInt(page_number) || 1,
-        totalPages: totalPages !== 0 ? totalPages : 1,
+        total_pages: totalPages !== 0 ? totalPages : 1,
       },
       message: 'User list fetched successfully',
     };
