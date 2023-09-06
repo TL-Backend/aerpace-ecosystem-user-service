@@ -20,6 +20,21 @@ exports.validateRoleInput = async (req, res, next) => {
       );
     }
 
+    if (permissions) {
+      let errors = [];
+      permissions.forEach((element) => {
+        if (typeof element !== 'string') {
+          errors.push('Not string');
+        }
+      });
+
+      if (errors.length > 0) {
+        errorsList.push(
+          errorResponses.INVALID_STRING_OR_MISSING_ERROR('permission'),
+        );
+      }
+    }
+
     if (errorsList.length) {
       throw errorsList.join(' ,');
     }

@@ -2,7 +2,7 @@ const {
   sequelize,
   aergov_roles,
 } = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
-const { redisDb } = require('../../utils/constant');
+const { RedisKeys: redisDb } = require('../../utils/constant');
 const { logger } = require('../../utils/logger');
 const { statusCodes } = require('../../utils/statusCode');
 const { errorResponses, successResponses } = require('./role.constant');
@@ -18,19 +18,18 @@ const redis = new Redis();
 exports.listRolesHelper = async (search = '') => {
   try {
     let params = {};
-    if (search != '') {
+    if (search) {
       params.search = search;
     }
     const fetchRolesQuery = listRolesQuery(params);
-    const roles = await sequelize.query(fetchRolesQuery).then((data) => {
-      return data[0];
-    });
+    const roles = await sequelize.query(fetchRolesQuery);
     return {
       success: true,
-      data: roles,
+      data: roles[0],
       message: successResponses.ROLES_FETCHED,
     };
   } catch (err) {
+    logger.error(err.message);
     return {
       success: false,
       message: err.message,
@@ -115,13 +114,12 @@ exports.addRole = async (params) => {
 
 exports.addMasterPermissionsToCache = async () => {
   try {
-    const pagesAndFeatures = await sequelize
-      .query(listMasterRolesQuery)
-      .then((data) => {
-        return data[0][0];
-      });
+    const pagesAndFeatures = await sequelize.query(listMasterRolesQuery);
 
-    if (pagesAndFeatures.pages === null || pagesAndFeatures.features === null) {
+    if (
+      pagesAndFeatures[0][0].pages === null ||
+      pagesAndFeatures[0][0].features === null
+    ) {
       return {
         success: false,
         data: null,
@@ -129,15 +127,16 @@ exports.addMasterPermissionsToCache = async () => {
       };
     }
 
-    const masterRolesData =
-      this.pagesAndFeaturesToMasterPermissionTree(pagesAndFeatures);
-    logger.info(`masterRolesData = ${masterRolesData}`);
+    const masterRolesData = this.pagesAndFeaturesToMasterPermissionTree(
+      pagesAndFeatures[0][0],
+    );
+
     await redis.set(redisDb.MASTER_ROLES_TREE, JSON.stringify(masterRolesData));
 
     return {
-      success: false,
+      success: true,
       data: masterRolesData,
-      message: errorResponses.PAGES_OR_FEATURES_NOT_FOUND,
+      message: successResponses.MASTER_TREE_GENERATED,
     };
   } catch (err) {
     logger.error(err.message);
@@ -160,8 +159,7 @@ exports.getMasterPermissionsTree = async () => {
       };
     }
 
-    const { success, message, data, errorCode } =
-      await this.addMasterPermissionsToCache();
+    const { success, message, data } = await this.addMasterPermissionsToCache();
     if (!success) {
       return {
         success: false,
