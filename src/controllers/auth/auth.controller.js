@@ -229,7 +229,7 @@ exports.resetPassword = async (req, res, next) => {
 
 exports.getAccessTokenWithRefresh = async (req, res, next) => {
   try {
-    const refreshToken = req.headers.authorization;
+    const refreshToken = req.body.refresh_token;
     const {
       success,
       errorCode,
@@ -253,7 +253,7 @@ exports.getAccessTokenWithRefresh = async (req, res, next) => {
     return successResponse({
       res,
       data: {
-        idToken,
+        id_token: idToken,
       },
       message: successResponses.TOKEN_REFRESHED,
       code: statusCodes.STATUS_CODE_SUCCESS,

@@ -20,7 +20,7 @@ exports.loginValidation = async (req, res, next) => {
       errorsList.push(errorResponses.INVALID_APP_TYPE);
     }
     if (errorsList.length) {
-      throw errorsList.join();
+      throw errorsList.join(', ');
     }
     next();
   } catch (err) {
@@ -43,7 +43,7 @@ exports.forgotPasswordValidations = async (req, res, next) => {
       errorsList.push(errorResponses.EMAIL_INVALID);
     }
     if (errorsList.length) {
-      throw errorsList.join();
+      throw errorsList.join(', ');
     }
     next();
   } catch (err) {
@@ -70,7 +70,7 @@ exports.resetPasswordValidations = async (req, res, next) => {
       errorsList.push(errorResponses.PASSWORD_INVALID);
     }
     if (errorsList.length) {
-      throw errorsList.join();
+      throw errorsList.join(', ');
     }
     next();
   } catch (err) {
@@ -88,12 +88,11 @@ exports.resetPasswordValidations = async (req, res, next) => {
 exports.refreshTokenValidation = async (req, res, next) => {
   try {
     const errorsList = [];
-    const refreshToken = req.headers.authorization;
-    if (!refreshToken) {
+    if (!req.body.refresh_token) {
       errorsList.push(errorResponses.TOKEN_INVALID);
     }
     if (errorsList.length) {
-      throw errorsList.join();
+      throw errorsList.join(', ');
     }
     next();
   } catch (err) {
