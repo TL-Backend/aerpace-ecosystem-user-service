@@ -20,7 +20,7 @@ app.use((req, res, next) =>
     req,
     res,
     message: 'Route not found',
-  })
+  }),
 );
 
 app.use((error, req, res, next) =>
@@ -30,7 +30,7 @@ app.use((error, req, res, next) =>
     res,
     error,
     message: error.message,
-  })
+  }),
 );
 
 app.listen(process.env.PORT || 3000, () => {
