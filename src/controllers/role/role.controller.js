@@ -10,13 +10,13 @@ const { errorResponses } = require('./role.constant');
 exports.listRoles = async (req, res, next) => {
   try {
     const { search } = req.query;
-    const { data, success, message, code } = await listRolesHelper(search);
+    const { data, success, message, errorCode } = await listRolesHelper(search);
     if (!success) {
       return errorResponse({
         req,
         res,
         message: message,
-        code: code,
+        code: errorCode,
       });
     }
 
@@ -40,13 +40,13 @@ exports.listRoles = async (req, res, next) => {
 
 exports.createRole = async (req, res, next) => {
   try {
-    const { data, success, message, code } = await addRole(req.body);
+    const { data, success, message, errorCode } = await addRole(req.body);
     if (!success) {
       return errorResponse({
         req,
         res,
         message,
-        code,
+        code: errorCode,
       });
     }
     return successResponse({
