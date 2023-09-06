@@ -6,7 +6,7 @@ const app = express();
 app.disable('x-powered-by');
 
 const { errorResponse } = require('./src/utils/responseHandler');
-const { statusCodes } = require('./src/utils/statusCodes');
+const { statusCodes } = require('./src/utils/statusCode');
 const { router } = require('./src/routes/index');
 
 app.use(express.json());
@@ -20,7 +20,7 @@ app.use((req, res, next) =>
     req,
     res,
     message: 'Route not found',
-  })
+  }),
 );
 
 app.use((error, req, res, next) =>
@@ -30,7 +30,7 @@ app.use((error, req, res, next) =>
     res,
     error,
     message: error.message,
-  })
+  }),
 );
 
 app.listen(process.env.PORT || 3000, () => {

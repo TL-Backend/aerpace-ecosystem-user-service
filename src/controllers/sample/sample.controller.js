@@ -3,13 +3,14 @@ const {
   errorResponse,
 } = require('../../utils/responseHandler');
 
-const { statusCodes } = require('../../utils/statusCodes');
+const { statusCodes } = require('../../utils/statusCode');
 const { logger } = require('../../utils/logger');
 
 const sampleTest = async (req, res, next) => {
   try {
     logger.info('success');
     return successResponse({
+      data: {},
       req,
       res,
       message: 'sample test route executed successfully',
