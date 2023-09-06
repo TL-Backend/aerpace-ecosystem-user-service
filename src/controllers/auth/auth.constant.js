@@ -32,5 +32,5 @@ exports.appType = {
 };
 
 exports.userType = {
-  USER: 'user',
+  USER: 'USER',
 };
