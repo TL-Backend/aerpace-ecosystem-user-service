@@ -6,15 +6,18 @@ const {
   constants,
 } = require('../../services/aerpace-ecosystem-backend-db/src/commons/constant');
 const {
-  aergov_roles,
+  sequelize,
 } = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
+const { getRolePermissions } = require('./config.query');
 
 exports.configHelper = async (params) => {
   try {
-    const { roleId } = params;
-    const rolePermissions = await aergov_roles.findOne({
-      where: { id: roleId },
+    const { userId } = params;
+
+    const rolePermissions = await sequelize.query(getRolePermissions, {
+      replacements: { userId },
     });
+
     const { success, data, message } = await getMasterPermissionsTree();
     if (!success) {
       return {
@@ -28,7 +31,7 @@ exports.configHelper = async (params) => {
       success: true,
       data: {
         master_permissions: data,
-        role: rolePermissions.permission_tree[0],
+        role: rolePermissions[0][0]?.permission_tree[0],
         enums: constants,
       },
       message: successResponses.CONFIG_FETCHED,

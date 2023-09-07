@@ -9,7 +9,6 @@ exports.getConfig = async (req, res, next) => {
   try {
     const { data, success, message, code } = await configHelper({
       userId: 'u_1',
-      roleId: 'r_4',
     });
     if (!success) {
       return errorResponse({
