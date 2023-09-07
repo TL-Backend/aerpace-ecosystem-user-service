@@ -1,10 +1,16 @@
-const { errorResponse, successResponse } = require("../../utils/responseHandler");
-const { statusCodes } = require("../../utils/statusCode");
-const { configHelper } = require("./config.helper");
+const {
+  errorResponse,
+  successResponse,
+} = require('../../utils/responseHandler');
+const { statusCodes } = require('../../utils/statusCode');
+const { configHelper } = require('./config.helper');
 
 exports.getConfig = async (req, res, next) => {
   try {
-    const { data, success, message, code } = await configHelper({userId: "u_1", roleId: "r_4"});
+    const { data, success, message, code } = await configHelper({
+      userId: 'u_1',
+      roleId: 'r_4',
+    });
     if (!success) {
       return errorResponse({
         req,
