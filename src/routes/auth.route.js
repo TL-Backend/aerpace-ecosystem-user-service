@@ -23,7 +23,7 @@ module.exports = function (router) {
     resetPasswordValidations,
     resetPassword,
   );
-  router.get(
+  router.post(
     '/auth/refresh',
     refreshTokenValidation,
     getAccessTokenWithRefresh,
