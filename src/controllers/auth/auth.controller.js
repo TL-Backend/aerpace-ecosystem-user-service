@@ -84,8 +84,8 @@ exports.login = async (req, res, next) => {
         code: statusCodes.STATUS_CODE_SUCCESS,
         message: successResponses.LOGIN_SUCCESSFUL,
         data: {
-          idToken,
-          refreshToken,
+          id_token: idToken,
+          refresh_token: refreshToken,
           profile,
         },
       });
