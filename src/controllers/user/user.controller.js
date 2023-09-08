@@ -20,8 +20,9 @@ exports.addUser = async (req, res) => {
       return errorResponse({
         req,
         res,
-        code: statusCodes.STATUS_CODE_FAILURE,
+        code: user.errorCode || statusCodes.STATUS_CODE_FAILURE,
         error: user.data,
+        message: user.message,
       });
     }
     return successResponse({
@@ -50,8 +51,9 @@ exports.editUser = async (req, res) => {
       return errorResponse({
         req,
         res,
-        code: statusCodes.STATUS_CODE_FAILURE,
+        code: user.errorCode || statusCodes.STATUS_CODE_FAILURE,
         error: user.data,
+        message: user.message,
       });
     }
     return successResponse({

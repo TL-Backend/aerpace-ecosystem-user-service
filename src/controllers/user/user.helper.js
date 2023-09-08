@@ -3,6 +3,7 @@ const {
   sequelize,
   aergov_user_roles,
 } = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
+const { dbTables } = require('../../utils/constant');
 const { logger } = require('../../utils/logger');
 const { statusCodes } = require('../../utils/statusCode');
 const {
@@ -14,6 +15,18 @@ const {
 exports.addUserHelper = async (user) => {
   const transaction = await sequelize.transaction();
   try {
+    const roleExist = await this.validateDataInDBById(
+      user.role_id,
+      dbTables.ROLES_TABLE,
+    );
+    if (!roleExist.data || !roleExist.success) {
+      return {
+        success: false,
+        errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
+        message: 'Invalid role_id',
+        data: null,
+      };
+    }
     if (!user.user_type) user.user_type = 'USER';
     const userData = await aergov_users.create(user, { transaction });
     if (userData) {
@@ -46,6 +59,29 @@ exports.addUserHelper = async (user) => {
 exports.editUserHelper = async (user, id) => {
   const transaction = await sequelize.transaction();
   try {
+    const userExist = await this.validateDataInDBById(id, dbTables.USERS_TABLE);
+    if (!userExist.data || !userExist.success) {
+      return {
+        success: false,
+        errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
+        message: 'Invalid user_id',
+        data: null,
+      };
+    }
+    if (user.role_id) {
+      const roleExist = await this.validateDataInDBById(
+        user.role_id,
+        dbTables.ROLES_TABLE,
+      );
+      if (!roleExist.data || !roleExist.success) {
+        return {
+          success: false,
+          errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
+          message: 'Invalid role_id',
+          data: null,
+        };
+      }
+    }
     const userData = await aergov_users.update(
       user,
       {
@@ -130,7 +166,7 @@ exports.getUsersListHelper = async (search_key, page_limit, page_number) => {
     const query = getListUsersQuery(search_key, page_limit, page_number);
     const data = await sequelize.query(query);
     let totalPages = Math.round(
-      parseInt(data[0][0]?.data_count || 0) / page_limit,
+      parseInt(data[0][0]?.data_count || 0) / parseInt(page_limit || 10),
     );
     return {
       success: true,

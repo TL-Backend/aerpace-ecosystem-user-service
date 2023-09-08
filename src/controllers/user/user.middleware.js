@@ -59,11 +59,6 @@ exports.validateUserInput = async (req, res, next) => {
       !role_id?.startsWith('r')
     ) {
       errorsList.push(messages.errorMessages.INVALID_ROLE_FOUND);
-    } else {
-      const role = await validateDataInDBById(role_id, dbTables.ROLES_TABLE);
-      if (!role.data || !role.success) {
-        errorsList.push(messages.errorMessages.NO_ROLE_FOUND);
-      }
     }
     if (!pin_code?.trim() || typeof pin_code !== 'string') {
       errorsList.push(
@@ -108,11 +103,6 @@ exports.validateUserUpdateInput = async (req, res, next) => {
     const errorsList = [];
     if (!id?.trim() || typeof id !== 'string' || !id.startsWith('u')) {
       errorsList.push(messages.errorMessages.INVAILD_USER_ID_MESSAGE);
-    } else {
-      const user = await validateDataInDBById(id, dbTables.USERS_TABLE);
-      if (!user.data || !user.success) {
-        errorsList.push(messages.errorMessages.INVAILD_USER_ID_MESSAGE);
-      }
     }
     if (first_name && (!first_name?.trim() || typeof first_name !== 'string')) {
       errorsList.push(
@@ -152,11 +142,6 @@ exports.validateUserUpdateInput = async (req, res, next) => {
         !role_id?.startsWith('r'))
     ) {
       errorsList.push(messages.errorMessages.INVALID_ROLE_FOUND);
-    } else {
-      const role = await validateDataInDBById(role_id, dbTables.ROLES_TABLE);
-      if (!role.data || !role.success) {
-        errorsList.push(messages.errorMessages.NO_ROLE_FOUND);
-      }
     }
     if (pin_code && (!pin_code?.trim() || typeof pin_code !== 'string')) {
       errorsList.push(
@@ -192,10 +177,10 @@ exports.validateGetUsersInput = async (req, res, next) => {
     if (search && typeof search !== 'string') {
       errorsList.push(messages.errorMessages.INVAILD_SEARCH_KEY);
     }
-    if (!page_limit || page_limit < 0) {
+    if (page_limit && page_limit < 0) {
       errorsList.push(messages.errorMessages.PAGE_LIMIT_MESSAGE);
     }
-    if (!page_number || page_number < 0) {
+    if (page_number && page_number < 0) {
       errorsList.push(messages.errorMessages.PAGE_NUMBER_MESSAGE);
     }
     if (errorsList.length) {
