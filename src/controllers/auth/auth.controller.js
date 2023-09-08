@@ -8,7 +8,11 @@ const { logger } = require('../../utils/logger');
 const { verifyPassword } = require('../../utils/passwordHandler');
 const { generateTokens } = require('./auth.util');
 const { expirationTime } = require('../../utils/constant');
-const { successResponses, errorResponses } = require('./auth.constant');
+const {
+  successResponses,
+  errorResponses,
+  tokenTypes,
+} = require('./auth.constant');
 const {
   createPasswordResetEntry,
   getUser,
@@ -41,6 +45,7 @@ exports.login = async (req, res, next) => {
       phone_number,
       role_id,
       role_name,
+      user_type,
       profile_url,
       first_time_login,
     } = userData;
@@ -50,11 +55,17 @@ exports.login = async (req, res, next) => {
     });
     if (isPasswordValid) {
       const idToken = generateTokens({
-        payload: { user_id, role_id, token_type: 'ID_TOKEN' },
+        payload: {
+          user_id,
+          user_type,
+          role_name,
+          role_id,
+          token_type: tokenTypes.ID_TOKEN,
+        },
         expiresIn: expirationTime.ID_TOKEN,
       });
       const refreshToken = generateTokens({
-        payload: { user_id, token_type: 'REFRESH_TOKEN' },
+        payload: { user_id, token_type: tokenTypes.REFRESH_TOKEN },
         expiresIn: expirationTime.REFRESH_TOKEN,
       });
       const profile = {
@@ -91,7 +102,7 @@ exports.login = async (req, res, next) => {
       req,
       res,
       code: statusCodes.STATUS_CODE_FAILURE,
-      message: err.message,
+      message: errorResponses.INTERNAL_ERROR,
     });
   }
 };
@@ -140,7 +151,7 @@ exports.forgotPassword = async (req, res, next) => {
       req,
       res,
       code: statusCodes.STATUS_CODE_FAILURE,
-      message: err.message,
+      message: errorResponses.INTERNAL_ERROR,
     });
   }
 };
@@ -222,7 +233,7 @@ exports.resetPassword = async (req, res, next) => {
       req,
       res,
       code: statusCodes.STATUS_CODE_FAILURE,
-      message: err.message,
+      message: errorResponses.INTERNAL_ERROR,
     });
   }
 };
@@ -230,12 +241,9 @@ exports.resetPassword = async (req, res, next) => {
 exports.getAccessTokenWithRefresh = async (req, res, next) => {
   try {
     const refreshToken = req.body.refresh_token;
-    const {
-      success,
-      errorCode,
-      message,
-      data: decodedToken,
-    } = decodeRefreshToken({ refreshToken });
+    const { success, errorCode, message, data } = await decodeRefreshToken({
+      refreshToken,
+    });
     if (!success) {
       return errorResponse({
         req,
@@ -244,11 +252,17 @@ exports.getAccessTokenWithRefresh = async (req, res, next) => {
         message,
       });
     }
-    const { id } = decodedToken;
+    const { user_id, user_type, role_name, role_id } = data;
     const idToken = generateTokens({
-      payload: { id },
+      payload: {
+        user_id,
+        user_type,
+        role_name,
+        role_id,
+        token_type: tokenTypes.ID_TOKEN,
+      },
       expiresIn: expirationTime.ID_TOKEN,
-      token_type: 'ID_TOKEN',
+      token_type: tokenTypes.ID_TOKEN,
     });
     return successResponse({
       res,
@@ -264,7 +278,7 @@ exports.getAccessTokenWithRefresh = async (req, res, next) => {
       req,
       res,
       code: statusCodes.STATUS_CODE_FAILURE,
-      message: err.message,
+      message: errorResponses.INTERNAL_ERROR,
     });
   }
 };

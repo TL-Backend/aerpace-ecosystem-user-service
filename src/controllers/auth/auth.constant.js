@@ -25,6 +25,7 @@ exports.errorResponses = {
   INVALID_RESET_LINK: 'Invalid Reset link',
   INVALID_APP_TYPE: 'invalid app type',
   PASSWORD_INVALID: 'password invalid or empty',
+  INTERNAL_ERROR: 'Internal error',
 };
 
 exports.appType = {
@@ -33,4 +34,9 @@ exports.appType = {
 
 exports.userType = {
   USER: 'USER',
+};
+
+exports.tokenTypes = {
+  ID_TOKEN: `ID_TOKEN`,
+  REFRESH_TOKEN: `REFRESH_TOKEN`,
 };
