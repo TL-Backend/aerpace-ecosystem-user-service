@@ -291,8 +291,7 @@ exports.temporarayPasswordReset = async (req, res, next) => {
     const {
       success,
       errorCode,
-      message,
-      data,
+      message
     } = await changeTemporarayPassword({authorization,password});
     if(!success){
       return errorResponse({
