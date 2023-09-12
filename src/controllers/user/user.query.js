@@ -29,14 +29,14 @@ exports.getListUsersQuery = (search_key, pageLimit, pageNumber) => {
   queryPagination = getPaginationQuery({ pageLimit, pageNumber });
   return `SELECT
   COUNT(*) OVER() AS data_count,
-  usr.id AS user_id,
+  usr.id AS id,
   usr.first_name, usr.last_name, usr.email, usr.phone_number, usr.country_code, usr.address, usr.pin_code, usr.state,
-  json_agg(json_build_object('role_name', r.role_name, 'roles', r.id)) AS roles
+  json_build_object('role_name', r.role_name, 'id', r.id) AS role
   FROM ${dbTables.USERS_TABLE} as usr
   LEFT JOIN ${dbTables.USER_ROLES_TABLE} as urole ON urole.user_id = usr.id
   LEFT JOIN ${dbTables.ROLES_TABLE} as r ON r.id = urole.role_id
   ${querySearchCondition}
-  GROUP BY usr.id, usr.first_name, usr.last_name, usr.email, usr.phone_number, usr.country_code, usr.address, usr.pin_code, usr.state
+  GROUP BY usr.id, usr.first_name, usr.last_name, usr.email, usr.phone_number, usr.country_code, usr.address, usr.pin_code, usr.state, r.role_name, r.id
   ${queryPagination};
 `;
 };
