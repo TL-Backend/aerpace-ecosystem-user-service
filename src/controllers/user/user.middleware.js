@@ -98,7 +98,7 @@ exports.validateUserUpdateInput = async (req, res, next) => {
       address,
       pin_code,
       last_name,
-      email
+      email,
     } = req.body;
     const id = req.params.id;
     const errorsList = [];
@@ -155,9 +155,7 @@ exports.validateUserUpdateInput = async (req, res, next) => {
       );
     }
     if (email) {
-      errorsList.push(
-        messages.errorMessages.EMAIL_NOT_EDITABLE,
-      );
+      errorsList.push(messages.errorMessages.EMAIL_NOT_EDITABLE);
     }
     if (errorsList.length) {
       throw errorsList.join(' ,');

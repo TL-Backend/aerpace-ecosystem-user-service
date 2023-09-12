@@ -131,7 +131,10 @@ exports.addMasterPermissionsToCache = async () => {
       pagesAndFeatures[0][0],
     );
 
-    await redis.set(redisKeys.MASTER_ROLES_TREE, JSON.stringify(masterRolesData));
+    await redis.set(
+      redisKeys.MASTER_ROLES_TREE,
+      JSON.stringify(masterRolesData),
+    );
 
     return {
       success: true,

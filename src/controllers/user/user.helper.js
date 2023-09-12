@@ -29,7 +29,10 @@ exports.addUserHelper = async (user) => {
       };
     }
     if (!user.user_type) user.user_type = 'USER';
-    const userExist = await this.checkUserExistWithEmail(user.email, user.user_type);
+    const userExist = await this.checkUserExistWithEmail(
+      user.email,
+      user.user_type,
+    );
     if (userExist.data || !userExist.success) {
       return {
         success: false,
@@ -169,7 +172,7 @@ exports.checkUserExistWithEmail = async (email, user_type) => {
       data: null,
     };
   }
-}
+};
 
 exports.validateDataInDBById = async (id_key, table) => {
   try {
