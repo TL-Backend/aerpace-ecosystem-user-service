@@ -17,7 +17,7 @@ exports.addUser = async (req, res) => {
     const user = await addUserHelper(userDetails);
     if (!user.success) {
       logger.error(user.data);
-      return errorResponse({
+        return errorResponse({
         req,
         res,
         code: user.errorCode || statusCodes.STATUS_CODE_FAILURE,

@@ -98,6 +98,7 @@ exports.validateUserUpdateInput = async (req, res, next) => {
       address,
       pin_code,
       last_name,
+      email
     } = req.body;
     const id = req.params.id;
     const errorsList = [];
@@ -151,6 +152,11 @@ exports.validateUserUpdateInput = async (req, res, next) => {
     if (address && (!address?.trim() || typeof address !== 'string')) {
       errorsList.push(
         messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('address'),
+      );
+    }
+    if (email) {
+      errorsList.push(
+        messages.errorMessages.EMAIL_NOT_EDITABLE,
       );
     }
     if (errorsList.length) {

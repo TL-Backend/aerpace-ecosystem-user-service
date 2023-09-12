@@ -10,6 +10,11 @@ exports.getDataById = (table) => {
   `;
 };
 
+exports.getUserByEmailQuery = `SELECT *
+  FROM ${dbTables.USERS_TABLE}
+  WHERE email = :email AND user_type = :user_type
+  `;
+
 exports.getUserRoleId = `SELECT id
   FROM ${dbTables.USER_ROLES_TABLE}
   WHERE user_id = :user_id AND role_id = :role_id
