@@ -10,6 +10,7 @@ exports.errorMessages = {
   PAGE_NUMBER_MESSAGE: 'Page number should be positive',
   INVALID_USER_TYPE_MESSAGE: 'Invalid user type, it must be a string',
   INVALID_ROLE_FOUND: 'Invalid role id format',
+  EMAIL_NOT_EDITABLE: 'Email not editable',
 };
 
 exports.successMessages = {

@@ -10,6 +10,7 @@ const {
   getDataById,
   getListUsersQuery,
   getUserRoleId,
+  getUserByEmailQuery,
 } = require('./user.query');
 
 exports.addUserHelper = async (user) => {
@@ -28,6 +29,18 @@ exports.addUserHelper = async (user) => {
       };
     }
     if (!user.user_type) user.user_type = 'USER';
+    const userExist = await this.checkUserExistWithEmail(
+      user.email,
+      user.user_type,
+    );
+    if (userExist.data || !userExist.success) {
+      return {
+        success: false,
+        errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
+        message: 'User already exist with this email',
+        data: null,
+      };
+    }
     const userData = await aergov_users.create(user, { transaction });
     if (userData) {
       await aergov_user_roles.create(
@@ -133,6 +146,29 @@ exports.editUserHelper = async (user, id) => {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
       message: 'Error while modifying user',
+      data: null,
+    };
+  }
+};
+
+exports.checkUserExistWithEmail = async (email, user_type) => {
+  try {
+    const query = getUserByEmailQuery;
+    const data = await sequelize.query(query, {
+      replacements: { email, user_type },
+      type: sequelize.QueryTypes.SELECT,
+    });
+    return {
+      success: true,
+      message: 'Data fetched sucessfully',
+      data: data[0],
+    };
+  } catch (err) {
+    logger.error(err);
+    return {
+      success: false,
+      errorCode: statusCodes.STATUS_CODE_FAILURE,
+      message: 'Error while fetching data',
       data: null,
     };
   }
