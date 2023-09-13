@@ -25,7 +25,7 @@ exports.listRolesHelper = async (search = '') => {
     const roles = await sequelize.query(fetchRolesQuery);
     return {
       success: true,
-      data: roles[0],
+      data: { roles: roles[0] },
       message: successResponses.ROLES_FETCHED,
     };
   } catch (err) {
@@ -131,7 +131,10 @@ exports.addMasterPermissionsToCache = async () => {
       pagesAndFeatures[0][0],
     );
 
-    await redis.set(redisKeys.MASTER_ROLES_TREE, JSON.stringify(masterRolesData));
+    await redis.set(
+      redisKeys.MASTER_ROLES_TREE,
+      JSON.stringify(masterRolesData),
+    );
 
     return {
       success: true,

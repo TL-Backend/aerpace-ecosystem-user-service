@@ -23,7 +23,7 @@ exports.listRoles = async (req, res, next) => {
     return successResponse({
       req,
       res,
-      data: data,
+      data,
       message: message,
       code: statusCodes.STATUS_CODE_SUCCESS,
     });
