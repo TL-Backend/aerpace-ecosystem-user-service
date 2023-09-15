@@ -100,6 +100,7 @@ exports.getUsersListHelper = async (search_key, pageLimit, pageNumber) => {
         return {
           data: {
             users: data[0],
+            totalCount: parseInt(data[0][0].data_count) || 0,
             pageLimit: parseInt(pageLimit) || 10,
             pageNumber: parseInt(pageNumber) || 1,
             totalPages: Math.round(
