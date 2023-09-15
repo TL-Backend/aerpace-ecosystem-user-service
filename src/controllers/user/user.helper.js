@@ -208,6 +208,7 @@ exports.getUsersListHelper = async (search_key, page_limit, page_number) => {
       success: true,
       data: {
         users: data[0],
+        total_count: parseInt(data[0][0].data_count) || 0,
         page_limit: parseInt(page_limit) || 10,
         page_number: parseInt(page_number) || 1,
         total_pages: totalPages !== 0 ? totalPages : 1,
