@@ -2,15 +2,15 @@ const {
   addUser,
   editUser,
   getUsersList,
-} = require('../controllers/user/users.controller');
+} = require('../controllers/user/user.controller');
 const {
   validateUserInput,
   validateUserUpdateInput,
   validateGetUsersInput,
-} = require('../controllers/user/users.middleware');
+} = require('../controllers/user/user.middleware');
 
 module.exports = function (app) {
-  app.post('/user', validateUserInput, addUser);
-  app.patch('/user/:id', validateUserUpdateInput, editUser);
+  app.post('/users', validateUserInput, addUser);
+  app.patch('/users/:id', validateUserUpdateInput, editUser);
   app.get('/users', validateGetUsersInput, getUsersList);
 };

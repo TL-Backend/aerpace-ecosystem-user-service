@@ -4,6 +4,8 @@ on:
     branches:
       - main
       - dev
+      - features
+      - staging
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:

@@ -6,10 +6,10 @@ const {
   addUserHelper,
   editUserHelper,
   getUsersListHelper,
-} = require('./users.helper');
-const { statusCodes } = require('../../utils/statusCodes');
+} = require('./user.helper');
+const { statusCodes } = require('../../utils/statusCode');
 const { logger } = require('../../utils/logger');
-const messages = require('./users.constants');
+const messages = require('./user.constant');
 
 exports.addUser = async (req, res) => {
   try {
@@ -20,8 +20,9 @@ exports.addUser = async (req, res) => {
       return errorResponse({
         req,
         res,
-        code: statusCodes.STATUS_CODE_FAILURE,
+        code: user.errorCode || statusCodes.STATUS_CODE_FAILURE,
         error: user.data,
+        message: user.message,
       });
     }
     return successResponse({
@@ -50,8 +51,9 @@ exports.editUser = async (req, res) => {
       return errorResponse({
         req,
         res,
-        code: statusCodes.STATUS_CODE_FAILURE,
+        code: user.errorCode || statusCodes.STATUS_CODE_FAILURE,
         error: user.data,
+        message: user.message,
       });
     }
     return successResponse({
@@ -73,8 +75,8 @@ exports.editUser = async (req, res) => {
 
 exports.getUsersList = async (req, res) => {
   try {
-    const { search, pageLimit, pageNumber } = req.query;
-    const user = await getUsersListHelper(search, pageLimit, pageNumber);
+    const { search, page_limit, page_number } = req.query;
+    const user = await getUsersListHelper(search, page_limit, page_number);
     if (!user.success) {
       logger.error(user.data);
       return errorResponse({
@@ -97,7 +99,6 @@ exports.getUsersList = async (req, res) => {
       req,
       res,
       code: statusCodes.STATUS_CODE_FAILURE,
-      message: err,
     });
   }
 };
