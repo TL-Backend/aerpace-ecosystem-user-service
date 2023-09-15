@@ -25,7 +25,7 @@ exports.listRolesHelper = async (search = '') => {
     const roles = await sequelize.query(fetchRolesQuery);
     return {
       success: true,
-      data: roles[0],
+      data: { roles: roles[0] },
       message: successResponses.ROLES_FETCHED,
     };
   } catch (err) {

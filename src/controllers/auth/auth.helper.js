@@ -19,23 +19,28 @@ const {
   constants,
 } = require('../../services/aerpace-ecosystem-backend-db/src/commons/constant');
 
-exports.decodeRefreshToken = ({ refreshToken }) => {
+exports.decodeRefreshToken = async ({ refreshToken }) => {
   try {
-    const decodedToken = jwt.verify(
-      JSON.parse(refreshToken),
-      process.env.SECURITY_KEY,
-    );
+    const decodedToken = jwt.verify(refreshToken, process.env.SECURITY_KEY);
+
     if (decodedToken.token_type !== 'REFRESH_TOKEN') {
       return {
         success: false,
         errorCode: statusCodes.STATUS_CODE_UNAUTHORIZED,
         message: errorResponses.INVALID_REFRESH_TOKEN,
+        data: null,
       };
     }
+
+    const userDataWithRoles = await sequelize.query(queries.userDataWithRole, {
+      replacements: { id: decodedToken.user_id },
+      type: sequelize.QueryTypes.SELECT,
+    });
+
     return {
       success: true,
       message: successResponses.DATA_FETCH_SUCCESSFULL,
-      data: decodedToken,
+      data: userDataWithRoles[0],
     };
   } catch (err) {
     logger.error(err);
