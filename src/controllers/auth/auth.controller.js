@@ -21,6 +21,7 @@ const {
   checkResetValidity,
   decodeRefreshToken,
   getValidUserWithRoleDetails,
+  changeTemporarayPassword,
 } = require('./auth.helper');
 const { sendEmail } = require('../../utils/emailSender');
 
@@ -84,8 +85,8 @@ exports.login = async (req, res, next) => {
         code: statusCodes.STATUS_CODE_SUCCESS,
         message: successResponses.LOGIN_SUCCESSFUL,
         data: {
-          idToken,
-          refreshToken,
+          id_token: idToken,
+          refresh_token: refreshToken,
           profile,
         },
       });
@@ -282,3 +283,36 @@ exports.getAccessTokenWithRefresh = async (req, res, next) => {
     });
   }
 };
+
+exports.temporarayPasswordReset = async (req, res, next) => {
+  try {
+    const authorization = req.headers.authorization
+    let { new_password: password } = req.body;
+    const {
+      success,
+      errorCode,
+      message
+    } = await changeTemporarayPassword({authorization,password});
+    if(!success){
+      return errorResponse({
+        req,
+        res,
+        code: errorCode,
+        message: message,
+      });
+    }
+    return successResponse({
+      res,
+      message,
+      code:errorCode,
+    });
+  } catch (err) {
+    logger.error(err);
+    return errorResponse({
+      req,
+      res,
+      code: statusCodes.STATUS_CODE_FAILURE,
+      message: errorResponses.INTERNAL_ERROR,
+    });
+  }
+}
