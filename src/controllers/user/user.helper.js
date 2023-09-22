@@ -6,6 +6,7 @@ const {
 const { dbTables } = require('../../utils/constant');
 const { logger } = require('../../utils/logger');
 const { statusCodes } = require('../../utils/statusCode');
+const messages = require('./user.constant');
 const {
   getDataById,
   getListUsersQuery,
@@ -24,7 +25,7 @@ exports.addUserHelper = async (user) => {
       return {
         success: false,
         errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
-        message: 'Invalid role_id',
+        message: messages.errorMessages.INVALID_ROLE_ID,
         data: null,
       };
     }
@@ -37,7 +38,7 @@ exports.addUserHelper = async (user) => {
       return {
         success: false,
         errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
-        message: 'User already exist with this email',
+        message: messages.errorMessages.USER_ALREADY_EXIST_WITH_EMAIL,
         data: null,
       };
     }
@@ -53,7 +54,7 @@ exports.addUserHelper = async (user) => {
       transaction.commit();
       return {
         success: true,
-        message: 'User added successfully',
+        message: messages.successMessages.USER_ADDED_MESSAGE,
         data: userData,
       };
     }
@@ -63,7 +64,7 @@ exports.addUserHelper = async (user) => {
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
-      message: 'Error while creating user',
+      message: messages.errorMessages.CREATE_USER_ERROR_FOUND,
       data: null,
     };
   }
@@ -77,7 +78,7 @@ exports.editUserHelper = async (user, id) => {
       return {
         success: false,
         errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
-        message: 'Invalid user_id',
+        message: messages.errorMessages.INVAILD_USER_ID_MESSAGE,
         data: null,
       };
     }
@@ -90,7 +91,7 @@ exports.editUserHelper = async (user, id) => {
         return {
           success: false,
           errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
-          message: 'Invalid role_id',
+          message: messages.errorMessages.INVALID_ROLE_ID,
           data: null,
         };
       }
@@ -135,7 +136,7 @@ exports.editUserHelper = async (user, id) => {
       transaction.commit();
       return {
         success: true,
-        message: 'User data edited successfully',
+        message: messages.successMessages.USER_UPDATED_MESSAGE,
         data: userData,
       };
     }
@@ -145,7 +146,7 @@ exports.editUserHelper = async (user, id) => {
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
-      message: 'Error while modifying user',
+      message: messages.errorMessages.UPDATE_USER_ERROR_FOUND,
       data: null,
     };
   }
@@ -160,7 +161,7 @@ exports.checkUserExistWithEmail = async (email, user_type) => {
     });
     return {
       success: true,
-      message: 'Data fetched sucessfully',
+      message: messages.successMessages.USERS_FETCHED_MESSAGE,
       data: data[0],
     };
   } catch (err) {
@@ -168,7 +169,7 @@ exports.checkUserExistWithEmail = async (email, user_type) => {
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
-      message: 'Error while fetching data',
+      message: messages.errorMessages.FETCHING_USERS_ERROR_FOUND,
       data: null,
     };
   }
@@ -183,7 +184,7 @@ exports.validateDataInDBById = async (id_key, table) => {
     });
     return {
       success: true,
-      message: 'Data fetched sucessfully',
+      message: messages.successMessages.DATA_FETCHED_MESSAGE,
       data: data[0],
     };
   } catch (err) {
@@ -191,7 +192,7 @@ exports.validateDataInDBById = async (id_key, table) => {
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
-      message: 'Error while fetching data',
+      message: messages.errorMessages.FETCHING_USERS_ERROR_FOUND,
       data: null,
     };
   }
@@ -213,14 +214,14 @@ exports.getUsersListHelper = async (search_key, page_limit, page_number) => {
         page_number: parseInt(page_number) || 1,
         total_pages: totalPages !== 0 ? totalPages : 1,
       },
-      message: 'User list fetched successfully',
+      message: messages.successMessages.USERS_FETCHED_MESSAGE,
     };
   } catch (err) {
     logger.error(err);
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
-      message: 'Error while listing users',
+      message: messages.errorMessages.FETCHING_USERS_ERROR_FOUND,
       data: null,
     };
   }
