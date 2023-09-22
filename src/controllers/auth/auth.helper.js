@@ -21,7 +21,17 @@ const {
 
 exports.decodeRefreshToken = async ({ refreshToken }) => {
   try {
-    const decodedToken = jwt.verify(refreshToken, process.env.SECURITY_KEY);
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(refreshToken, process.env.SECURITY_KEY);
+    } catch (err) {
+      return {
+        success: false,
+        code: statusCodes.STATUS_CODE_UNAUTHORIZED,
+        message: errorResponses.TOKEN_INVALID,
+        data: null,
+      }
+    }
 
     if (decodedToken.token_type !== 'REFRESH_TOKEN') {
       return {
@@ -93,10 +103,10 @@ exports.getUser = async ({ where, options = {}, attributes = {} }) => {
     const exclude = ['created_at', 'updated_at', 'createdAt', 'updatedAt'];
     const userData = raw
       ? await aergov_users.findOne({
-          where,
-          raw: true,
-          attributes: { exclude },
-        })
+        where,
+        raw: true,
+        attributes: { exclude },
+      })
       : await aergov_users.findOne({ where, attributes: { exclude } });
     if (!userData) {
       return {
@@ -236,3 +246,47 @@ exports.changeUserPassword = async ({
     };
   }
 };
+
+exports.changeTemporarayPassword = async ({ authorization, password: enteredPassword }) => {
+  try {
+    console.log(authorization);
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(authorization, process.env.SECURITY_KEY);
+    } catch (err) {
+      return {
+        success: false,
+        code: statusCodes.STATUS_CODE_UNAUTHORIZED,
+        message: errorResponses.TOKEN_INVALID,
+        data: null,
+      }
+    }
+    const { user_id } = decodedToken
+    const { success, errorCode, message, data: userData } = await this.getUser({ where: { id: user_id }, options: { raw: false } })
+    if (!success) {
+      return {
+        success,
+        code: errorCode,
+        message,
+        data: null,
+      };
+    }
+    const hashedPassword = await hashPassword({ password: enteredPassword });
+    userData.password = hashedPassword;
+    userData.first_time_login = 0;
+    await userData.save();
+    return {
+      success: true,
+      message: successResponses.PASSWORD_CHANGED,
+      data: null,
+    };
+  } catch (err) {
+    logger.error(err);
+    return {
+      success: false,
+      code: statusCodes.STATUS_CODE_FAILURE,
+      message: err.message,
+      data: null,
+    };
+  }
+}

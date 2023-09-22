@@ -12,7 +12,7 @@ exports.mailService = async ({ params }) => {
 };
 
 exports.sendEmail = async ({ email, resetUuid }) => {
-  const resetLink = `https://${process.env.URL}/reset-password?uuid=${resetUuid}`;
+  const resetLink = `${process.env.CHANGE_PASSWORD_URL}?uuid=${resetUuid}`;
   const emailContent = this.emailConstants.RESET_LINK_EMAIL_CONTENT.replace(
     '$resetLink',
     `${resetLink}`,
@@ -68,8 +68,8 @@ exports.sendTemporaryPasswordEmail = async ({ email, temporaryPassword }) => {
 };
 
 exports.emailConstants = {
-  FROM_EMAIL: 'jayasrisadaram2002@gmail.com',
-  REPLY_TO_EMAIL: 'jayasrisadaram2002@gmail.com',
+  FROM_EMAIL: 'pradeep@tilicho.in',
+  REPLY_TO_EMAIL: 'pradeep@tilicho.in',
   SUBJECT: 'Welcome to aerpace - Temporary Password',
   TEMPORARY_PASSWORD_SUBJECT: 'Hello aerpace user - Reset your password',
   TEMPORARY_PASSWORD_EMAIL_CONTENT: `
