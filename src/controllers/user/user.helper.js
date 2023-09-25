@@ -119,7 +119,7 @@ exports.editUserHelper = async (user, id) => {
         replacements: { user_id: id, role_id: user.role_id },
         type: sequelize.QueryTypes.SELECT,
       });
-      if (data[0].id) {
+      if (data[0]?.id) {
         await aergov_users.update(
           {
             user_id: id,
