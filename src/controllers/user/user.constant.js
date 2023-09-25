@@ -16,6 +16,7 @@ exports.errorMessages = {
   CREATE_USER_ERROR_FOUND: 'Error while creating user',
   UPDATE_USER_ERROR_FOUND: 'Error while modifying user',
   FETCHING_USERS_ERROR_FOUND: 'Error while fetching data',
+  PASSWORD_ADD_ERROR: 'Password cannot be added at the time of user creation'
 };
 
 exports.successMessages = {

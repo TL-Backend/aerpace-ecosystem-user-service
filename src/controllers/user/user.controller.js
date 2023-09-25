@@ -26,7 +26,7 @@ exports.addUser = async (req, res) => {
       });
     }
     return successResponse({
-      data: user.data,
+      data: user.data,  
       req,
       res,
       message: messages.successMessages.USER_ADDED_MESSAGE,
