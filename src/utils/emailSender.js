@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const { logger } = require('./logger');
 require('dotenv').config();
 
 exports.mailService = async ({ params }) => {
@@ -12,59 +13,69 @@ exports.mailService = async ({ params }) => {
 };
 
 exports.sendEmail = async ({ email, resetUuid }) => {
-  const resetLink = `${process.env.CHANGE_PASSWORD_URL}?uuid=${resetUuid}`;
-  const emailContent = this.emailConstants.RESET_LINK_EMAIL_CONTENT.replace(
-    '$resetLink',
-    `${resetLink}`,
-  );
-  const params = {
-    Destination: {
-      ToAddresses: [email],
-    },
-    Message: {
-      Body: {
-        Html: {
+  try{
+    const resetLink = `${process.env.CHANGE_PASSWORD_URL}?uuid=${resetUuid}`;
+    const emailContent = this.emailConstants.RESET_LINK_EMAIL_CONTENT.replace(
+      '$resetLink',
+      `${resetLink}`,
+    );
+    const params = {
+      Destination: {
+        ToAddresses: [email],
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: 'UTF-8',
+            Data: emailContent,
+          },
+        },
+        Subject: {
           Charset: 'UTF-8',
-          Data: emailContent,
+          Data: this.emailConstants.SUBJECT,
         },
       },
-      Subject: {
-        Charset: 'UTF-8',
-        Data: this.emailConstants.SUBJECT,
-      },
-    },
-    Source: this.emailConstants.FROM_EMAIL,
-    ReplyToAddresses: [this.emailConstants.REPLY_TO_EMAIL],
-  };
-  await this.mailService({ params });
+      Source: this.emailConstants.FROM_EMAIL,
+      ReplyToAddresses: [this.emailConstants.REPLY_TO_EMAIL],
+    };
+    await this.mailService({ params });
+  }catch(err){
+    logger.error(err)
+  }
 };
 
 exports.sendTemporaryPasswordEmail = async ({ email, temporaryPassword }) => {
-  const emailContent =
-    this.emailConstants.TEMPORARY_PASSWORD_EMAIL_CONTENT.replace(
-      '{temporaryPassword}',
-      temporaryPassword,
-    );
-  const params = {
-    Destination: {
-      ToAddresses: [email],
-    },
-    Message: {
-      Body: {
-        Html: {
+  try {
+    const emailContent =
+      this.emailConstants.TEMPORARY_PASSWORD_EMAIL_CONTENT.replace(
+        '{temporaryPassword}',
+        temporaryPassword,
+      );
+    const params = {
+      Destination: {
+        ToAddresses: [email],
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: 'UTF-8',
+            Data: emailContent,
+          },
+        },
+        Subject: {
           Charset: 'UTF-8',
-          Data: emailContent,
+          Data: this.emailConstants.SUBJECT,
         },
       },
-      Subject: {
-        Charset: 'UTF-8',
-        Data: this.emailConstants.SUBJECT,
-      },
-    },
-    Source: this.emailConstants.FROM_EMAIL,
-    ReplyToAddresses: [this.emailConstants.REPLY_TO_EMAIL],
-  };
-  await mailService({ params });
+      Source: this.emailConstants.FROM_EMAIL,
+      ReplyToAddresses: [this.emailConstants.REPLY_TO_EMAIL],
+    };
+    await this.mailService({ params });
+    return true
+  } catch (err) {
+    logger.error(err)
+    return false
+  }
 };
 
 exports.emailConstants = {

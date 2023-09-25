@@ -3,7 +3,7 @@ const {
   forgotPassword,
   resetPassword,
   getAccessTokenWithRefresh,
-  temporarayPasswordReset,
+  temporaryPasswordReset,
 } = require('../controllers/auth/auth.controller');
 const {
   loginValidation,
@@ -20,7 +20,7 @@ module.exports = function (router) {
     forgotPasswordValidations,
     forgotPassword,
   );
-  router.post('/auth/temporary-password-reset',temporaryPasswordRestValidation,temporarayPasswordReset)
+  router.post('/auth/temporary-password-reset',temporaryPasswordRestValidation,temporaryPasswordReset)
   router.post(
     '/auth/reset-password/:uuid',
     resetPasswordValidations,

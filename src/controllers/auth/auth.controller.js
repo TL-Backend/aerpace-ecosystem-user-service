@@ -284,7 +284,7 @@ exports.getAccessTokenWithRefresh = async (req, res, next) => {
   }
 };
 
-exports.temporarayPasswordReset = async (req, res, next) => {
+exports.temporaryPasswordReset = async (req, res, next) => {
   try {
     const authorization = req.headers.authorization
     let { new_password: password } = req.body;
