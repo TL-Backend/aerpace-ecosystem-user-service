@@ -8,7 +8,7 @@ const { configHelper } = require('./config.helper');
 exports.getConfig = async (req, res, next) => {
   try {
     const { data, success, message, code } = await configHelper({
-      userId: 'u_1',
+      userId: req.query.userId,
     });
     if (!success) {
       return errorResponse({
