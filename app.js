@@ -1,6 +1,6 @@
 'use strict';
 
-require('dotenv').config();
+const dotenv = require('dotenv');
 const express = require('express');
 const app = express();
 app.disable('x-powered-by');
@@ -12,6 +12,10 @@ const { router } = require('./src/routes/index');
 const {
   addMasterPermissionsToCache,
 } = require('./src/controllers/role/role.helper');
+
+const environment = process.env.NODE_ENV || 'development';
+const envFilePath = `config/${environment}.env`;
+require('dotenv').config({ path: envFilePath });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

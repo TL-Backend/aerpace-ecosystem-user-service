@@ -9,7 +9,9 @@
     "prepare": "husky install",
     "lint": "eslint",
     "format": "prettier --write .",
-    "local": "node app.js"
+    "local": "node app.js",
+    "dev": "NODE_ENV=development node app.js",
+    "staging": "NODE_ENV=production node app.js"
   },
   "repository": {
     "type": "git",
