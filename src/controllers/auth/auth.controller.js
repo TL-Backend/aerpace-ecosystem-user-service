@@ -286,14 +286,14 @@ exports.getAccessTokenWithRefresh = async (req, res, next) => {
 
 exports.temporarayPasswordReset = async (req, res, next) => {
   try {
-    const authorization = req.headers.authorization
+    const userId = req.query.userId
     let { new_password: password } = req.body;
     const {
       success,
       errorCode,
       message
-    } = await changeTemporarayPassword({authorization,password});
-    if(!success){
+    } = await changeTemporarayPassword({ userId, password });
+    if (!success) {
       return errorResponse({
         req,
         res,
@@ -304,7 +304,7 @@ exports.temporarayPasswordReset = async (req, res, next) => {
     return successResponse({
       res,
       message,
-      code:errorCode,
+      code: errorCode,
     });
   } catch (err) {
     logger.error(err);
