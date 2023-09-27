@@ -247,22 +247,9 @@ exports.changeUserPassword = async ({
   }
 };
 
-exports.changeTemporarayPassword = async ({ authorization, password: enteredPassword }) => {
+exports.changeTemporarayPassword = async ({ userId, password: enteredPassword }) => {
   try {
-    console.log(authorization);
-    let decodedToken;
-    try {
-      decodedToken = jwt.verify(authorization, process.env.SECURITY_KEY);
-    } catch (err) {
-      return {
-        success: false,
-        code: statusCodes.STATUS_CODE_UNAUTHORIZED,
-        message: errorResponses.TOKEN_INVALID,
-        data: null,
-      }
-    }
-    const { user_id } = decodedToken
-    const { success, errorCode, message, data: userData } = await this.getUser({ where: { id: user_id }, options: { raw: false } })
+    const { success, errorCode, message, data: userData } = await this.getUser({ where: { id: userId }, options: { raw: false } })
     if (!success) {
       return {
         success,

@@ -110,11 +110,7 @@ exports.refreshTokenValidation = async (req, res, next) => {
 exports.temporaryPasswordRestValidation = async (req, res, next) => {
   try {
     const errorsList = [];
-    const authorization = req.headers.authorization;
     const { new_password: password } = req.body
-    if (!authorization) {
-      errorsList.push(errorResponses.TOKEN_INVALID);
-    }
     if (!password || typeof password !== 'string') {
       errorsList.push(errorResponses.PASSWORD_INVALID);
     }
