@@ -22,8 +22,8 @@ exports.configHelper = async (params) => {
     if (!success) {
       return {
         success: false,
-        message: message,
-        errorCode: 404,
+        message,
+        errorCode: statusCodes.STATUS_CODE_DATA_NOT_FOUND,
       };
     }
 
@@ -31,7 +31,7 @@ exports.configHelper = async (params) => {
       success: true,
       data: {
         master_permissions: data,
-        role: rolePermissions[0][0]?.permission_tree[0],
+        role: rolePermissions[0][0]?.permission_tree[0] || {},
         enums: constants,
       },
       message: successResponses.CONFIG_FETCHED,
