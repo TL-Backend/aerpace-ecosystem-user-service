@@ -28,7 +28,7 @@ exports.decodeRefreshToken = async ({ refreshToken }) => {
       if (err instanceof jwt.TokenExpiredError) {
         return {
           success: false,
-          data: {},
+          data: null,
           message: errorResponses.TOKEN_EXPIRED,
           errorCode: statusCodes.STATUS_CODE_UNAUTHORIZED,
         };
