@@ -25,9 +25,18 @@ exports.decodeRefreshToken = async ({ refreshToken }) => {
     try {
       decodedToken = jwt.verify(refreshToken, process.env.SECURITY_KEY);
     } catch (err) {
+      if (err instanceof jwt.TokenExpiredError) {
+        return {
+          success: false,
+          data: {},
+          message: errorResponses.TOKEN_EXPIRED,
+          errorCode: statusCodes.STATUS_CODE_UNAUTHORIZED,
+        };
+      }
+
       return {
         success: false,
-        code: statusCodes.STATUS_CODE_UNAUTHORIZED,
+        errorCode: statusCodes.STATUS_CODE_UNAUTHORIZED,
         message: errorResponses.TOKEN_INVALID,
         data: null,
       }
