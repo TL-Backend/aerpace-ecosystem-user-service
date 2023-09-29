@@ -37,7 +37,7 @@ exports.configHelper = async (params) => {
       message: successResponses.CONFIG_FETCHED,
     };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return {
       success: false,
       message: errorResponses.INTERNAL_ERROR,

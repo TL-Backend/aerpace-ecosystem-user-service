@@ -26,14 +26,14 @@ exports.addUser = async (req, res) => {
       });
     }
     return successResponse({
-      data: user.data,  
+      data: user.data,
       req,
       res,
       message: messages.successMessages.USER_ADDED_MESSAGE,
       code: statusCodes.STATUS_CODE_SUCCESS,
     });
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return errorResponse({
       req,
       res,
@@ -64,7 +64,7 @@ exports.editUser = async (req, res) => {
       code: statusCodes.STATUS_CODE_SUCCESS,
     });
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return errorResponse({
       req,
       res,
@@ -94,7 +94,7 @@ exports.getUsersList = async (req, res) => {
       code: statusCodes.STATUS_CODE_SUCCESS,
     });
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return errorResponse({
       req,
       res,

@@ -20,7 +20,11 @@ module.exports = function (router) {
     forgotPasswordValidations,
     forgotPassword,
   );
-  router.post('/auth/temporary-password-reset',temporaryPasswordRestValidation,temporaryPasswordReset)
+  router.post(
+    '/auth/temporary-password-reset',
+    temporaryPasswordRestValidation,
+    temporaryPasswordReset,
+  );
   router.post(
     '/auth/reset-password/:uuid',
     resetPasswordValidations,

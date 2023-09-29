@@ -6,7 +6,10 @@ const {
 const { dbTables } = require('../../utils/constant');
 const { sendTemporaryPasswordEmail } = require('../../utils/emailSender');
 const { logger } = require('../../utils/logger');
-const { generateTemporaryPassword, hashPassword } = require('../../utils/passwordHandler');
+const {
+  generateTemporaryPassword,
+  hashPassword,
+} = require('../../utils/passwordHandler');
 const { statusCodes } = require('../../utils/statusCode');
 const messages = require('./user.constant');
 const {
@@ -34,7 +37,7 @@ exports.addUserHelper = async (user) => {
     if (!user.user_type) user.user_type = 'USER';
     const userExist = await this.checkUserExistWithEmail(
       user.email,
-      user.user_type
+      user.user_type,
     );
     if (userExist.data || !userExist.success) {
       return {
@@ -45,9 +48,9 @@ exports.addUserHelper = async (user) => {
       };
     }
     user.first_time_login = 1;
-    const temporaryPassword = await generateTemporaryPassword()
+    const temporaryPassword = await generateTemporaryPassword();
     const hashedPassword = await hashPassword({ password: temporaryPassword });
-    user.password = hashedPassword
+    user.password = hashedPassword;
     const userData = await aergov_users.create(user, { transaction });
     if (userData) {
       await aergov_user_roles.create(
@@ -58,17 +61,20 @@ exports.addUserHelper = async (user) => {
         { transaction },
       );
       transaction.commit();
-      await sendTemporaryPasswordEmail({email: userData.email,temporaryPassword })
-      delete user.password
-      delete user.first_time_login
+      await sendTemporaryPasswordEmail({
+        email: userData.email,
+        temporaryPassword,
+      });
+      delete user.password;
+      delete user.first_time_login;
       return {
         success: true,
         message: messages.successMessages.USER_ADDED_MESSAGE,
-        data: user
+        data: user,
       };
     }
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     transaction.rollback();
     return {
       success: false,
@@ -150,7 +156,7 @@ exports.editUserHelper = async (user, id) => {
       };
     }
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     transaction.rollback();
     return {
       success: false,
@@ -174,7 +180,7 @@ exports.checkUserExistWithEmail = async (email, user_type) => {
       data: data[0],
     };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
@@ -197,7 +203,7 @@ exports.validateDataInDBById = async (id_key, table) => {
       data: data[0],
     };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
@@ -226,7 +232,7 @@ exports.getUsersListHelper = async (search_key, page_limit, page_number) => {
       message: messages.successMessages.USERS_FETCHED_MESSAGE,
     };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
