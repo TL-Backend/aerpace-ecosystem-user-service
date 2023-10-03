@@ -274,7 +274,7 @@ exports.getAccessTokenWithRefresh = async (req, res, next) => {
       code: statusCodes.STATUS_CODE_SUCCESS,
     });
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return errorResponse({
       req,
       res,
@@ -286,13 +286,12 @@ exports.getAccessTokenWithRefresh = async (req, res, next) => {
 
 exports.temporaryPasswordReset = async (req, res, next) => {
   try {
-    const userId = req.query.userId
+    const userId = req.query.userId;
     let { new_password: password } = req.body;
-    const {
-      success,
-      errorCode,
-      message
-    } = await changeTemporarayPassword({ userId, password });
+    const { success, errorCode, message } = await changeTemporarayPassword({
+      userId,
+      password,
+    });
     if (!success) {
       return errorResponse({
         req,
@@ -307,7 +306,7 @@ exports.temporaryPasswordReset = async (req, res, next) => {
       code: errorCode,
     });
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return errorResponse({
       req,
       res,
@@ -315,4 +314,4 @@ exports.temporaryPasswordReset = async (req, res, next) => {
       message: errorResponses.INTERNAL_ERROR,
     });
   }
-}
+};

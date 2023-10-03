@@ -39,7 +39,7 @@ exports.decodeRefreshToken = async ({ refreshToken }) => {
         errorCode: statusCodes.STATUS_CODE_UNAUTHORIZED,
         message: errorResponses.TOKEN_INVALID,
         data: null,
-      }
+      };
     }
 
     if (decodedToken.token_type !== 'REFRESH_TOKEN') {
@@ -62,7 +62,7 @@ exports.decodeRefreshToken = async ({ refreshToken }) => {
       data: userDataWithRoles[0],
     };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
@@ -112,10 +112,10 @@ exports.getUser = async ({ where, options = {}, attributes = {} }) => {
     const exclude = ['created_at', 'updated_at', 'createdAt', 'updatedAt'];
     const userData = raw
       ? await aergov_users.findOne({
-        where,
-        raw: true,
-        attributes: { exclude },
-      })
+          where,
+          raw: true,
+          attributes: { exclude },
+        })
       : await aergov_users.findOne({ where, attributes: { exclude } });
     if (!userData) {
       return {
@@ -246,7 +246,7 @@ exports.changeUserPassword = async ({
       data: null,
     };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return {
       success: false,
       code: statusCodes.STATUS_CODE_FAILURE,
@@ -256,9 +256,17 @@ exports.changeUserPassword = async ({
   }
 };
 
-exports.changeTemporarayPassword = async ({ userId, password: enteredPassword }) => {
+exports.changeTemporarayPassword = async ({
+  userId,
+  password: enteredPassword,
+}) => {
   try {
-    const { success, errorCode, message, data: userData } = await this.getUser({ where: { id: userId }, options: { raw: false } })
+    const {
+      success,
+      errorCode,
+      message,
+      data: userData,
+    } = await this.getUser({ where: { id: userId }, options: { raw: false } });
     if (!success) {
       return {
         success,
@@ -277,7 +285,7 @@ exports.changeTemporarayPassword = async ({ userId, password: enteredPassword })
       data: null,
     };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return {
       success: false,
       code: statusCodes.STATUS_CODE_FAILURE,
@@ -285,4 +293,4 @@ exports.changeTemporarayPassword = async ({ userId, password: enteredPassword })
       data: null,
     };
   }
-}
+};

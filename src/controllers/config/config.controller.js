@@ -26,7 +26,7 @@ exports.getConfig = async (req, res, next) => {
       code: statusCodes.STATUS_CODE_SUCCESS,
     });
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return errorResponse({
       req,
       res,

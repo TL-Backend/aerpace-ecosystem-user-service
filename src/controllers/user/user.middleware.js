@@ -19,9 +19,7 @@ exports.validateUserInput = async (req, res, next) => {
     } = req.body;
     const errorsList = [];
     if (req.body.password) {
-      errorsList.push(
-        messages.errorMessages.PASSWORD_ADD_ERROR,
-      );
+      errorsList.push(messages.errorMessages.PASSWORD_ADD_ERROR);
     }
     if (!first_name?.trim() || typeof first_name !== 'string') {
       errorsList.push(
@@ -106,9 +104,7 @@ exports.validateUserUpdateInput = async (req, res, next) => {
     const id = req.params.id;
     const errorsList = [];
     if (req.body.password) {
-      errorsList.push(
-        messages.errorMessages.PASSWORD_ADD_ERROR,
-      );
+      errorsList.push(messages.errorMessages.PASSWORD_ADD_ERROR);
     }
     if (!id?.trim() || typeof id !== 'string' || !id.startsWith('u')) {
       errorsList.push(messages.errorMessages.INVAILD_USER_ID_MESSAGE);

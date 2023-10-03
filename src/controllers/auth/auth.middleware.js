@@ -110,7 +110,7 @@ exports.refreshTokenValidation = async (req, res, next) => {
 exports.temporaryPasswordRestValidation = async (req, res, next) => {
   try {
     const errorsList = [];
-    const { new_password: password } = req.body
+    const { new_password: password } = req.body;
     if (!password || typeof password !== 'string') {
       errorsList.push(errorResponses.PASSWORD_INVALID);
     }
@@ -128,4 +128,4 @@ exports.temporaryPasswordRestValidation = async (req, res, next) => {
       code: statusCodes.STATUS_CODE_INVALID_FORMAT,
     });
   }
-}
+};

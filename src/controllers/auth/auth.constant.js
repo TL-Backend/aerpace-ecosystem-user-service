@@ -1,31 +1,30 @@
 exports.successResponses = {
-  LOGIN_SUCCESSFUL: 'login successful',
+  LOGIN_SUCCESSFUL: 'Login successful',
   RESET_LINK_SENT: 'Link to reset password is sent to your email',
-  TEMPORARY_PASSWORD_SET_SUCCESS:
-    'Temporary password has been emailed to user for initial login.',
+  TEMPORARY_PASSWORD_SET_SUCCESS: 'Temporary password is sent to your email',
   PASSWORD_CHANGED: 'Password changed successfully',
-  TOKEN_REFRESHED: 'access token refreshed successfully',
-  DATA_FETCH_SUCCESSFULL: 'data fetched or processed successfully',
+  TOKEN_REFRESHED: 'Access token refreshed successfully',
+  DATA_FETCH_SUCCESSFUL: 'Data fetched successfully',
 };
 
 exports.errorResponses = {
-  healthCheckError: 'Service unavailable',
-  EMAIL_INVALID: 'Invalid email or user not found',
+  HEALTH_CHECK_ERROR: 'Service unavailable',
+  EMAIL_INVALID: 'Invalid credentials',
   INVALID_EMAIL_USERTYPE_COMBINATION:
     'Invalid email and user type combination or user not found',
-  TOKEN_INVALID: 'token invalid',
-  INVALID_REFRESH_TOKEN: 'invalid refresh token',
-  TOKEN_EXPIRED: 'Token expired',
-  INVALID_SIGNATURE: 'invalid signature or invalid token',
-  AUTHENTICATION_ERROR: 'Email and password combination does not exists',
-  EMAIL_ALREADY_USED: 'Email already used.',
+  TOKEN_INVALID: 'Something went wrong',
+  INVALID_REFRESH_TOKEN: 'Something went wrong',
+  TOKEN_EXPIRED: 'Something went wrong',
+  INVALID_SIGNATURE: 'Something went wrong',
+  AUTHENTICATION_ERROR: 'Invalid credentials',
+  EMAIL_ALREADY_USED: 'Email already in use',
   SAME_PASSWORD_USED_ERROR: 'New password cannot be same as the old one',
   UUID_INVALID: 'Invalid UUID',
-  USER_NOT_FOUND: 'user details not found',
-  INVALID_RESET_LINK: 'Invalid Reset link',
-  INVALID_APP_TYPE: 'invalid app type',
-  PASSWORD_INVALID: 'password invalid or empty',
-  INTERNAL_ERROR: 'Internal error'
+  USER_NOT_FOUND: 'Something went wrong',
+  INVALID_RESET_LINK: 'Something went wrong',
+  INVALID_APP_TYPE: 'Something went wrong',
+  PASSWORD_INVALID: 'Something went wrong',
+  INTERNAL_ERROR: 'Something went wrong',
 };
 
 exports.appType = {
