@@ -17,6 +17,7 @@ exports.errorMessages = {
   UPDATE_USER_ERROR_FOUND: 'Error while modifying user',
   FETCHING_USERS_ERROR_FOUND: 'Error while fetching data',
   PASSWORD_ADD_ERROR: 'Password cannot be added at the time of user creation',
+  USER_NOT_FOUND: 'User not found',
 };
 
 exports.successMessages = {
@@ -24,4 +25,5 @@ exports.successMessages = {
   USER_UPDATED_MESSAGE: 'User updated successfully',
   USERS_FETCHED_MESSAGE: 'users fetched successfully',
   DATA_FETCHED_MESSAGE: 'Data fetched successfully',
+  USER_DELETED_MESSAGE: 'User deleted successfully'
 };
