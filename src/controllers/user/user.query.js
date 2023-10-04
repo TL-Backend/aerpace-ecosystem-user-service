@@ -37,6 +37,7 @@ exports.getListUsersQuery = (search_key, pageLimit, pageNumber) => {
   LEFT JOIN ${dbTables.ROLES_TABLE} as r ON r.id = urole.role_id
   ${querySearchCondition}
   GROUP BY usr.id, usr.first_name, usr.last_name, usr.email, usr.phone_number, usr.country_code, usr.address, usr.pin_code, usr.state, r.role_name, r.id
+  ORDER BY usr.created_at DESC
   ${queryPagination};
 `;
 };

@@ -58,7 +58,7 @@ exports.decodeRefreshToken = async ({ refreshToken }) => {
 
     return {
       success: true,
-      message: successResponses.DATA_FETCH_SUCCESSFULL,
+      message: successResponses.DATA_FETCH_SUCCESSFUL,
       data: userDataWithRoles[0],
     };
   } catch (err) {
@@ -85,7 +85,7 @@ exports.getValidUserWithRoleDetails = async ({ email, app }) => {
     ) {
       return {
         success: true,
-        message: successResponses.DATA_FETCH_SUCCESSFULL,
+        message: successResponses.DATA_FETCH_SUCCESSFUL,
         data: userRolesData[0],
       };
     }
@@ -127,7 +127,7 @@ exports.getUser = async ({ where, options = {}, attributes = {} }) => {
     }
     return {
       success: true,
-      message: successResponses.DATA_FETCH_SUCCESSFULL,
+      message: successResponses.DATA_FETCH_SUCCESSFUL,
       data: userData,
     };
   } catch (err) {
@@ -153,7 +153,7 @@ exports.createPasswordResetEntry = async ({ userData }) => {
     const { uuid: reset_uuid } = data;
     return {
       success: true,
-      message: successResponses.DATA_FETCH_SUCCESSFULL,
+      message: successResponses.DATA_FETCH_SUCCESSFUL,
       data: reset_uuid,
     };
   } catch (err) {
@@ -182,15 +182,14 @@ exports.getResetData = async ({ where, options = {} }) => {
     }
     return {
       success: true,
-      message: successResponses.DATA_FETCH_SUCCESSFULL,
+      message: successResponses.DATA_FETCH_SUCCESSFUL,
       data: resetData,
     };
   } catch (err) {
-    logger.error(err.message);
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
-      message: err.message,
+      message: errorResponses.INTERNAL_ERROR,
       data: null,
     };
   }
@@ -209,7 +208,7 @@ exports.checkResetValidity = async ({ resetData: resetInfo }) => {
     }
     return {
       success: true,
-      message: successResponses.DATA_FETCH_SUCCESSFULL,
+      message: successResponses.DATA_FETCH_SUCCESSFUL,
       data: true,
     };
   } catch (err) {

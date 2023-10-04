@@ -9,7 +9,7 @@ const {
 exports.loginValidation = async (req, res, next) => {
   try {
     const { email, password, app } = req.body;
-    const errorsList = [];
+    let errorsList = [];
     if (!email || typeof email !== 'string') {
       errorsList.push(errorResponses.EMAIL_INVALID);
     }
@@ -20,6 +20,7 @@ exports.loginValidation = async (req, res, next) => {
       errorsList.push(errorResponses.INVALID_APP_TYPE);
     }
     if (errorsList.length) {
+      errorsList = [...new Set(errorsList)]
       throw errorsList.join(', ');
     }
     next();
