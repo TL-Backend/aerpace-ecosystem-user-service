@@ -106,8 +106,8 @@ exports.getUsersList = async (req, res) => {
 
 exports.deleteUser = async (req, res, next) => {
   try {
-    const { id } = req.params
-    const { success, errorCode, message } = await deleteUserHelper({ id })
+    const { id } = req.params;
+    const { success, errorCode, message } = await deleteUserHelper({ id });
     if (!success) {
       return errorResponse({
         req,
@@ -130,4 +130,4 @@ exports.deleteUser = async (req, res, next) => {
       code: statusCodes.STATUS_CODE_FAILURE,
     });
   }
-}
+};

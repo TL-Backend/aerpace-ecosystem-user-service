@@ -1,4 +1,4 @@
-const { dbTables } = require("../../utils/constant");
+const { dbTables } = require('../../utils/constant');
 
 exports.getRolePermissions = `
   SELECT *

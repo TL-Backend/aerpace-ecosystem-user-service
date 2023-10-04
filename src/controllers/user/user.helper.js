@@ -65,7 +65,7 @@ exports.addUserHelper = async (user) => {
         email: userData.email,
         temporaryPassword,
       });
-      user.id = userData.id
+      user.id = userData.id;
       delete user.password;
       delete user.first_time_login;
       return {
@@ -247,9 +247,9 @@ exports.deleteUserHelper = async ({ id }) => {
   try {
     const userData = await aergov_users.findOne({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
     if (!userData) {
       return {
         success: false,
@@ -260,8 +260,8 @@ exports.deleteUserHelper = async ({ id }) => {
     }
     await aergov_users.destroy({
       where: {
-        id: userData.id
-      }
+        id: userData.id,
+      },
     });
     return {
       success: true,
@@ -278,4 +278,4 @@ exports.deleteUserHelper = async ({ id }) => {
       data: null,
     };
   }
-}
+};

@@ -14,5 +14,5 @@ module.exports = function (app) {
   app.post('/users', validateUserInput, addUser);
   app.patch('/users/:id', validateUserUpdateInput, editUser);
   app.get('/users', validateGetUsersInput, getUsersList);
-  app.delete('/users/:id', deleteUser)
+  app.delete('/users/:id', deleteUser);
 };
