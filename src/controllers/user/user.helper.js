@@ -65,6 +65,7 @@ exports.addUserHelper = async (user) => {
         email: userData.email,
         temporaryPassword,
       });
+      user.id = userData.id
       delete user.password;
       delete user.first_time_login;
       return {
