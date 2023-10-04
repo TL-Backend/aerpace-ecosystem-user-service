@@ -9,10 +9,10 @@ exports.successResponses = {
 
 exports.errorResponses = {
   HEALTH_CHECK_ERROR: 'Service unavailable',
-  EMAIL_INVALID: 'Invalid credentials',
+  EMAIL_INVALID: 'Email required',
   INVALID_EMAIL_USERTYPE_COMBINATION:
-    'Invalid email and user type combination or user not found',
-  TOKEN_INVALID: 'Something went wrong',
+    'Invalid credentials',
+  TOKEN_INVALID: 'token required',
   INVALID_REFRESH_TOKEN: 'Something went wrong',
   TOKEN_EXPIRED: 'Something went wrong',
   INVALID_SIGNATURE: 'Something went wrong',
@@ -20,10 +20,10 @@ exports.errorResponses = {
   EMAIL_ALREADY_USED: 'Email already in use',
   SAME_PASSWORD_USED_ERROR: 'New password cannot be same as the old one',
   UUID_INVALID: 'Invalid UUID',
-  USER_NOT_FOUND: 'Something went wrong',
+  USER_NOT_FOUND: 'User not found',
   INVALID_RESET_LINK: 'Something went wrong',
-  INVALID_APP_TYPE: 'Something went wrong',
-  PASSWORD_INVALID: 'Something went wrong',
+  INVALID_APP_TYPE: 'App type required',
+  PASSWORD_INVALID: 'Password required',
   INTERNAL_ERROR: 'Something went wrong',
 };
 

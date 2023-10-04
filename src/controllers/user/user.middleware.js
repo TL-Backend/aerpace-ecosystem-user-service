@@ -23,7 +23,7 @@ exports.validateUserInput = async (req, res, next) => {
     }
     if (!first_name?.trim() || typeof first_name !== 'string') {
       errorsList.push(
-        messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('first_name'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('first_name'),
       );
     }
     if (user_type && (!user_type?.trim() || typeof user_type !== 'string')) {
@@ -31,28 +31,28 @@ exports.validateUserInput = async (req, res, next) => {
     }
     if (!last_name?.trim() || typeof last_name !== 'string') {
       errorsList.push(
-        messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('last_name'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('last_name'),
       );
     }
     if (!country_code?.trim() || typeof country_code !== 'string') {
       errorsList.push(
-        messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('country_code'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('country_code'),
       );
     }
     if (!state?.trim() || typeof state !== 'string') {
       errorsList.push(
-        messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('state'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('state'),
       );
     }
     if (!phone_number?.trim() || typeof phone_number !== 'string') {
       errorsList.push(
-        messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('phone_number'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('phone_number'),
       );
     }
     let validRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     if (!email?.trim() || !email.match(validRegex)) {
-      errorsList.push(messages.errorMessages.INVAILD_EMAIL_FORMAT_MESSAGE);
+      errorsList.push(messages.errorMessages.INVALID_EMAIL_FORMAT_MESSAGE);
     }
     if (
       !role_id?.trim() ||
@@ -63,12 +63,12 @@ exports.validateUserInput = async (req, res, next) => {
     }
     if (!pin_code?.trim() || typeof pin_code !== 'string') {
       errorsList.push(
-        messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('pincode'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('pincode'),
       );
     }
     if (!address?.trim() || typeof address !== 'string') {
       errorsList.push(
-        messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('address'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('address'),
       );
     }
     if (errorsList.length) {
@@ -107,16 +107,16 @@ exports.validateUserUpdateInput = async (req, res, next) => {
       errorsList.push(messages.errorMessages.PASSWORD_ADD_ERROR);
     }
     if (!id?.trim() || typeof id !== 'string' || !id.startsWith('u')) {
-      errorsList.push(messages.errorMessages.INVAILD_USER_ID_MESSAGE);
+      errorsList.push(messages.errorMessages.INVALID_USER_ID_MESSAGE);
     }
     if (first_name && (!first_name?.trim() || typeof first_name !== 'string')) {
       errorsList.push(
-        messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('first_name'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('first_name'),
       );
     }
     if (last_name && (!last_name?.trim() || typeof last_name !== 'string')) {
       errorsList.push(
-        messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('last_name'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('last_name'),
       );
     }
     if (
@@ -124,12 +124,12 @@ exports.validateUserUpdateInput = async (req, res, next) => {
       (!country_code?.trim() || typeof country_code !== 'string')
     ) {
       errorsList.push(
-        messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('country_code'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('country_code'),
       );
     }
     if (state && (!state?.trim() || typeof state !== 'string')) {
       errorsList.push(
-        messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('state'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('state'),
       );
     }
     if (
@@ -137,7 +137,7 @@ exports.validateUserUpdateInput = async (req, res, next) => {
       (!phone_number?.trim() || typeof phone_number !== 'string')
     ) {
       errorsList.push(
-        messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('phone_number'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('phone_number'),
       );
     }
     if (
@@ -150,12 +150,12 @@ exports.validateUserUpdateInput = async (req, res, next) => {
     }
     if (pin_code && (!pin_code?.trim() || typeof pin_code !== 'string')) {
       errorsList.push(
-        messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('pincode'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('pincode'),
       );
     }
     if (address && (!address?.trim() || typeof address !== 'string')) {
       errorsList.push(
-        messages.errorMessages.INVAILD_STRING_OR_MISSING_ERROR('address'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('address'),
       );
     }
     if (email) {
@@ -183,7 +183,7 @@ exports.validateGetUsersInput = async (req, res, next) => {
   try {
     const { search, page_limit, page_number } = req.query;
     if (search && typeof search !== 'string') {
-      errorsList.push(messages.errorMessages.INVAILD_SEARCH_KEY);
+      errorsList.push(messages.errorMessages.INVALID_SEARCH_KEY);
     }
     if (page_limit && page_limit < 0) {
       errorsList.push(messages.errorMessages.PAGE_LIMIT_MESSAGE);
