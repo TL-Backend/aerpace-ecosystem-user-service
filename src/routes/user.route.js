@@ -2,7 +2,7 @@ const {
   addUser,
   editUser,
   getUsersList,
-  deleteUser,
+  hardDeleteUser,
 } = require('../controllers/user/user.controller');
 const {
   validateUserInput,
@@ -14,5 +14,5 @@ module.exports = function (app) {
   app.post('/users', validateUserInput, addUser);
   app.patch('/users/:id', validateUserUpdateInput, editUser);
   app.get('/users', validateGetUsersInput, getUsersList);
-  app.delete('/users/hard-delete/:id', deleteUser);
+  app.delete('/users/hard-delete/:id', hardDeleteUser);
 };
