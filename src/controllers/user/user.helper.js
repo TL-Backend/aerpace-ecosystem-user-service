@@ -243,7 +243,7 @@ exports.getUsersListHelper = async (search_key, page_limit, page_number) => {
   }
 };
 
-exports.deleteUserHelper = async ({ id }) => {
+exports.hardDeleteUserHelper = async ({ id }) => {
   try {
     const userData = await aergov_users.findOne({
       where: {

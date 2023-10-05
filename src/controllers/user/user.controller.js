@@ -6,7 +6,8 @@ const {
   addUserHelper,
   editUserHelper,
   getUsersListHelper,
-  deleteUserHelper,
+  hardDeleteUserHelper: deleteUserHelper,
+  hardDeleteUserHelper,
 } = require('./user.helper');
 const { statusCodes } = require('../../utils/statusCode');
 const { logger } = require('../../utils/logger');
@@ -107,7 +108,7 @@ exports.getUsersList = async (req, res) => {
 exports.deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { success, errorCode, message } = await deleteUserHelper({ id });
+    const { success, errorCode, message } = await hardDeleteUserHelper({ id });
     if (!success) {
       return errorResponse({
         req,
