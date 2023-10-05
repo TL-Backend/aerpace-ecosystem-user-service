@@ -2,6 +2,7 @@ const { statusCodes } = require('../../utils/statusCode');
 const { logger } = require('../../utils/logger');
 const { errorResponse } = require('../../utils/responseHandler');
 const messages = require('./user.constant');
+const { levelStarting } = require('../../utils/constant');
 
 exports.validateUserInput = async (req, res, next) => {
   try {
@@ -16,6 +17,7 @@ exports.validateUserInput = async (req, res, next) => {
       address,
       pin_code,
       user_type,
+      distributions_id
     } = req.body;
     const errorsList = [];
     if (req.body.password) {
@@ -47,6 +49,11 @@ exports.validateUserInput = async (req, res, next) => {
     if (!phone_number?.trim() || typeof phone_number !== 'string') {
       errorsList.push(
         messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('phone_number'),
+      );
+    }
+    if (!distributions_id?.trim() || typeof distributions_id !== 'string' || !distributions_id.startsWith(levelStarting.distribution)) {
+      errorsList.push(
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('distributions_id'),
       );
     }
     let validRegex =
@@ -100,6 +107,7 @@ exports.validateUserUpdateInput = async (req, res, next) => {
       pin_code,
       last_name,
       email,
+      distributions_id
     } = req.body;
     const id = req.params.id;
     const errorsList = [];
@@ -156,6 +164,11 @@ exports.validateUserUpdateInput = async (req, res, next) => {
     if (address && (!address?.trim() || typeof address !== 'string')) {
       errorsList.push(
         messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('address'),
+      );
+    }
+    if (!distributions_id?.trim() || typeof distributions_id !== 'string' || !distributions_id.startsWith(levelStarting.distribution)) {
+      errorsList.push(
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('distributions_id'),
       );
     }
     if (email) {
