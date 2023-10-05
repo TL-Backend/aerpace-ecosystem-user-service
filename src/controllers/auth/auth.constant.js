@@ -10,8 +10,7 @@ exports.successResponses = {
 exports.errorResponses = {
   HEALTH_CHECK_ERROR: 'Service unavailable',
   EMAIL_INVALID: 'Email required',
-  INVALID_EMAIL_USERTYPE_COMBINATION:
-    'Invalid credentials',
+  INVALID_EMAIL_USERTYPE_COMBINATION: 'Invalid credentials',
   TOKEN_INVALID: 'token required',
   INVALID_REFRESH_TOKEN: 'Something went wrong',
   TOKEN_EXPIRED: 'Something went wrong',

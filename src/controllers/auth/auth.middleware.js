@@ -20,7 +20,7 @@ exports.loginValidation = async (req, res, next) => {
       errorsList.push(errorResponses.INVALID_APP_TYPE);
     }
     if (errorsList.length) {
-      errorsList = [...new Set(errorsList)]
+      errorsList = [...new Set(errorsList)];
       throw errorsList.join(', ');
     }
     next();

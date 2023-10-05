@@ -6,6 +6,7 @@ const {
   addUserHelper,
   editUserHelper,
   getUsersListHelper,
+  hardDeleteUserHelper,
 } = require('./user.helper');
 const { statusCodes } = require('../../utils/statusCode');
 const { logger } = require('../../utils/logger');
@@ -91,6 +92,34 @@ exports.getUsersList = async (req, res) => {
       req,
       res,
       message: messages.successMessages.USERS_FETCHED_MESSAGE,
+      code: statusCodes.STATUS_CODE_SUCCESS,
+    });
+  } catch (err) {
+    logger.error(err.message);
+    return errorResponse({
+      req,
+      res,
+      code: statusCodes.STATUS_CODE_FAILURE,
+    });
+  }
+};
+
+exports.hardDeleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { success, errorCode, message } = await hardDeleteUserHelper({ id });
+    if (!success) {
+      return errorResponse({
+        req,
+        res,
+        code: errorCode,
+        message: message,
+      });
+    }
+    return successResponse({
+      req,
+      res,
+      message: message,
       code: statusCodes.STATUS_CODE_SUCCESS,
     });
   } catch (err) {

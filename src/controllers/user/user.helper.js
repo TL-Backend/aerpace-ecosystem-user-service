@@ -65,7 +65,7 @@ exports.addUserHelper = async (user) => {
         email: userData.email,
         temporaryPassword,
       });
-      user.id = userData.id
+      user.id = userData.id;
       delete user.password;
       delete user.first_time_login;
       return {
@@ -94,7 +94,7 @@ exports.editUserHelper = async (user, id) => {
       return {
         success: false,
         errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
-        message: messages.errorMessages.INVAILD_USER_ID_MESSAGE,
+        message: messages.errorMessages.INVALID_USER_ID_MESSAGE,
         data: null,
       };
     }
@@ -238,6 +238,43 @@ exports.getUsersListHelper = async (search_key, page_limit, page_number) => {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
       message: messages.errorMessages.FETCHING_USERS_ERROR_FOUND,
+      data: null,
+    };
+  }
+};
+
+exports.hardDeleteUserHelper = async ({ id }) => {
+  try {
+    const userData = await aergov_users.findOne({
+      where: {
+        id,
+      },
+    });
+    if (!userData) {
+      return {
+        success: false,
+        errorCode: statusCodes.STATUS_CODE_DATA_NOT_FOUND,
+        message: messages.errorMessages.USER_NOT_FOUND,
+        data: null,
+      };
+    }
+    await aergov_users.destroy({
+      where: {
+        id: userData.id,
+      },
+    });
+    return {
+      success: true,
+      errorCode: statusCodes.STATUS_CODE_SUCCESS,
+      message: messages.successMessages.USER_DELETED_MESSAGE,
+      data: null,
+    };
+  } catch (err) {
+    logger.error(err.message);
+    return {
+      success: false,
+      errorCode: statusCodes.STATUS_CODE_FAILURE,
+      message: err.message,
       data: null,
     };
   }
