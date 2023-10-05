@@ -17,7 +17,7 @@ exports.validateUserInput = async (req, res, next) => {
       address,
       pin_code,
       user_type,
-      distributions_id
+      distribution_id
     } = req.body;
     const errorsList = [];
     if (req.body.password) {
@@ -51,7 +51,7 @@ exports.validateUserInput = async (req, res, next) => {
         messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('phone_number'),
       );
     }
-    if (!distributions_id?.trim() || typeof distributions_id !== 'string' || !distributions_id.startsWith(levelStarting.distribution)) {
+    if (!distribution_id?.trim() || typeof distribution_id !== 'string' || !distribution_id.startsWith(levelStarting.distribution)) {
       errorsList.push(
         messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('distributions_id'),
       );
@@ -107,7 +107,7 @@ exports.validateUserUpdateInput = async (req, res, next) => {
       pin_code,
       last_name,
       email,
-      distributions_id
+      distribution_id
     } = req.body;
     const id = req.params.id;
     const errorsList = [];
@@ -166,7 +166,7 @@ exports.validateUserUpdateInput = async (req, res, next) => {
         messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('address'),
       );
     }
-    if (!distributions_id?.trim() || typeof distributions_id !== 'string' || !distributions_id.startsWith(levelStarting.distribution)) {
+    if (!distribution_id?.trim() || typeof distribution_id !== 'string' || !distribution_id.startsWith(levelStarting.distribution)) {
       errorsList.push(
         messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('distributions_id'),
       );
