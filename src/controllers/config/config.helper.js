@@ -27,10 +27,14 @@ exports.configHelper = async (params) => {
       };
     }
 
+    const handledMasterPermissionTree = this.handleMasterPermissionsTree({
+      permissionsTree: data,
+    });
+
     return {
       success: true,
       data: {
-        master_permissions: data,
+        master_permissions: handledMasterPermissionTree,
         role: rolePermissions[0][0]?.permission_tree[0] || {},
         enums: constants,
       },
@@ -44,5 +48,29 @@ exports.configHelper = async (params) => {
       errorCode: statusCodes.STATUS_CODE_FAILURE,
       data: null,
     };
+  }
+};
+
+exports.handleMasterPermissionsTree = ({ permissionsTree }) => {
+  try {
+    // console.log(permissionsTree);
+
+    let responsePermissionsTree = [];
+
+    permissionsTree.forEach((data) => {
+      if (data.pages.length < 2) {
+
+        data = data.pages[0];
+      }
+      responsePermissionsTree.push(data)
+      console.log("data--->", data);
+    });
+
+    // permissionsTree = pagesAndFeatures;
+
+    return responsePermissionsTree;
+  } catch (err) {
+    logger.error(err.message);
+    return permissionsTree;
   }
 };
