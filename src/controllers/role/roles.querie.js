@@ -10,6 +10,7 @@ exports.listRolesQuery = (params) => {
   SELECT *
   FROM ${dbTables.ROLES_TABLE}
   ${querySearchCondition}
+  ORDER BY created_at DESC
   `;
   return query;
 };
