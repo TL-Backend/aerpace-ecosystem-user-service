@@ -51,7 +51,7 @@ exports.validateUserInput = async (req, res, next) => {
         messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('phone_number'),
       );
     }
-    if (!distribution_id?.trim() || typeof distribution_id !== 'string' || !distribution_id.startsWith(levelStarting.distribution)) {
+    if (distribution_id && (!distribution_id?.trim() || typeof distribution_id !== 'string' || !distribution_id.startsWith(levelStarting.distribution))) {
       errorsList.push(
         messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('distributions_id'),
       );
@@ -166,7 +166,7 @@ exports.validateUserUpdateInput = async (req, res, next) => {
         messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('address'),
       );
     }
-    if (!distribution_id?.trim() || typeof distribution_id !== 'string' || !distribution_id.startsWith(levelStarting.distribution)) {
+    if (distribution_id && (!distribution_id?.trim() || typeof distribution_id !== 'string' || !distribution_id.startsWith(levelStarting.distribution))) {
       errorsList.push(
         messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('distributions_id'),
       );
