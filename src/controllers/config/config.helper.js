@@ -53,7 +53,6 @@ exports.configHelper = async (params) => {
 
 exports.handleMasterPermissionsTree = ({ permissionsTree }) => {
   try {
-    // console.log(permissionsTree);
 
     let responsePermissionsTree = [];
 
@@ -63,7 +62,6 @@ exports.handleMasterPermissionsTree = ({ permissionsTree }) => {
         data = data.pages[0];
       }
       responsePermissionsTree.push(data)
-      console.log("data--->", data);
     });
 
     // permissionsTree = pagesAndFeatures;
