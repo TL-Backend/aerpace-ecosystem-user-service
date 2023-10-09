@@ -18,6 +18,8 @@ const {
 const Redis = require('ioredis');
 const redis = new Redis();
 
+const { Sequelize, Op } = require('sequelize');
+
 exports.listRolesHelper = async (search = '') => {
   try {
     let params = {};
@@ -269,6 +271,117 @@ exports.generatePermissionTree = (permissions, masterList) => {
   });
 
   return tree;
+};
+
+exports.editRoleHelper = async ({ id, roleName, permissions }) => {
+  try {
+    const isValidRole = await aergov_roles.findOne({
+      where: { id },
+    });
+
+    if (!isValidRole) {
+      logger.error('Invalid Role id');
+      return {
+        success: false,
+        data: null,
+        message: errorResponses.ROLE_NOT_FOUND,
+        errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
+      };
+    }
+
+    if (roleName) {
+      const isInvalidRoleName = await aergov_roles.findOne({
+        where: {
+          role_name: roleName,
+          id: {
+            [Sequelize.Op.ne]: id, // Replace 'yourSpecificId' with the desired ID
+          },
+        },
+      });
+
+      if (isInvalidRoleName) {
+        logger.error(
+          'Role already exists with this name, please try with new name',
+        );
+        return {
+          success: false,
+          errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
+          message: errorResponses.NAME_EXISTS,
+          data: null,
+        };
+      }
+    }
+
+    if (permissions) {
+      const uniquePermissions = [...new Set(permissions)];
+
+      const featuresExists = await sequelize.query(
+        getFeaturesByIdentifiersQuery,
+        { replacements: { permissions: uniquePermissions } },
+      );
+
+      if (!featuresExists[0][0]?.result) {
+        logger.error('Invalid set permissions');
+        return {
+          success: false,
+          errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
+          message: errorResponses.INVALID_FEATURES,
+          data: null,
+        };
+      }
+
+      const { success, data, message } = await this.getMasterPermissionsTree();
+
+      if (!success) {
+        return {
+          success: false,
+          message: message || 'failed to fetch master permission tree',
+          errorCode: statusCodes.STATUS_CODE_FAILURE,
+          data: null,
+        };
+      }
+
+      const permission_tree = this.generatePermissionTree(
+        uniquePermissions,
+        data,
+      );
+
+      await aergov_roles.update(
+        {
+          role_name: roleName,
+          permission_list: uniquePermissions,
+          permission_tree: permission_tree,
+        },
+        { where: { id } },
+      );
+
+      return {
+        success: true,
+        data: { role_id: id },
+        message: successResponses.ROLE_UPDATED,
+      };
+    }
+
+    await aergov_roles.update(
+      {
+        role_name: roleName,
+      },
+      { where: { id } },
+    );
+
+    return {
+      success: true,
+      data: { role_id: id },
+      message: successResponses.ROLE_UPDATED,
+    };
+  } catch (err) {
+    logger.error(err.message);
+    return {
+      success: false,
+      data: null,
+      message: errorResponses.INTERNAL_ERROR,
+    };
+  }
 };
 
 exports.deleteRoleHelper = async (roleId) => {

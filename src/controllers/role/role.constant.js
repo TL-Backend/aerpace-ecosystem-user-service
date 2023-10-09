@@ -4,6 +4,7 @@ exports.successResponses = {
   PERMISSION_TREE_FETCHED: `Fetched master permission tree successfully`,
   MASTER_TREE_GENERATED: `Master tree is generated`,
   ROLE_DELETED: 'Role deleted successfully',
+  ROLE_UPDATED: `Role updated successfully`,
 };
 
 exports.errorResponses = {
@@ -14,7 +15,7 @@ exports.errorResponses = {
     return `${value} is mandatory`;
   },
   INTERNAL_ERROR: 'Something went wrong',
-  NAME_EXISTS: 'Name already exists',
+  NAME_EXISTS: 'Role already exists with this name, please try with new name',
   INVALID_FEATURES:
     'Features do not exist, please send a proper set of features',
   ROLE_CREATION_FAILED: 'Failed to create a role',
@@ -22,4 +23,5 @@ exports.errorResponses = {
   ROLE_NOT_FOUND: 'Role not found',
   ROLE_ASSIGNED_TO_USER:
     'Role is assigned to a user, connot perform delete operation when role is assigned',
+  NOTHING_TO_UPDATE: `Nothing to update here`,
 };
