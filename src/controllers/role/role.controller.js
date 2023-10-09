@@ -2,7 +2,7 @@ const {
   successResponse,
   errorResponse,
 } = require('../../utils/responseHandler');
-const { listRolesHelper, addRole } = require('./role.helper');
+const { listRolesHelper, addRole, deleteRoleHelper } = require('./role.helper');
 const { statusCodes } = require('../../utils/statusCode');
 const { logger } = require('../../utils/logger');
 const { errorResponses } = require('./role.constant');
@@ -41,6 +41,37 @@ exports.listRoles = async (req, res, next) => {
 exports.createRole = async (req, res, next) => {
   try {
     const { data, success, message, errorCode } = await addRole(req.body);
+    if (!success) {
+      return errorResponse({
+        req,
+        res,
+        message,
+        code: errorCode,
+      });
+    }
+    return successResponse({
+      req,
+      res,
+      data,
+      message,
+      code: statusCodes.STATUS_CODE_SUCCESS,
+    });
+  } catch (err) {
+    logger.error(err.message);
+    return errorResponse({
+      req,
+      res,
+      message: err.message,
+      code: statusCodes.STATUS_CODE_FAILURE,
+    });
+  }
+};
+
+exports.deleteRole = async (req, res, next) => {
+  try {
+    const { data, success, message, errorCode } = await deleteRoleHelper(
+      req.params.id,
+    );
     if (!success) {
       return errorResponse({
         req,

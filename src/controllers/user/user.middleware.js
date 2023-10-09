@@ -17,7 +17,7 @@ exports.validateUserInput = async (req, res, next) => {
       address,
       pin_code,
       user_type,
-      distribution_id
+      distribution_id,
     } = req.body;
     const errorsList = [];
     if (req.body.password) {
@@ -51,9 +51,16 @@ exports.validateUserInput = async (req, res, next) => {
         messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('phone_number'),
       );
     }
-    if (distribution_id && (!distribution_id?.trim() || typeof distribution_id !== 'string' || !distribution_id.startsWith(levelStarting.distribution))) {
+    if (
+      distribution_id &&
+      (!distribution_id?.trim() ||
+        typeof distribution_id !== 'string' ||
+        !distribution_id.startsWith(levelStarting.distribution))
+    ) {
       errorsList.push(
-        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('distributions_id'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR(
+          'distributions_id',
+        ),
       );
     }
     let validRegex =
@@ -107,7 +114,7 @@ exports.validateUserUpdateInput = async (req, res, next) => {
       pin_code,
       last_name,
       email,
-      distribution_id
+      distribution_id,
     } = req.body;
     const id = req.params.id;
     const errorsList = [];
@@ -166,9 +173,16 @@ exports.validateUserUpdateInput = async (req, res, next) => {
         messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('address'),
       );
     }
-    if (distribution_id && (!distribution_id?.trim() || typeof distribution_id !== 'string' || !distribution_id.startsWith(levelStarting.distribution))) {
+    if (
+      distribution_id &&
+      (!distribution_id?.trim() ||
+        typeof distribution_id !== 'string' ||
+        !distribution_id.startsWith(levelStarting.distribution))
+    ) {
       errorsList.push(
-        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR('distributions_id'),
+        messages.errorMessages.INVALID_STRING_OR_MISSING_ERROR(
+          'distributions_id',
+        ),
       );
     }
     if (email) {
