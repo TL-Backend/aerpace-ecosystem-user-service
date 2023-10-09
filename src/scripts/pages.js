@@ -1,32 +1,32 @@
 exports.pagesAndFeatures = [
   {
     id: 1,
-    name: 'Users',
-    identifier: 'USERS',
+    name: 'User Management Control',
+    identifier: 'USERS_MANAGEMENT',
     pages: [
       {
         id: 2,
         name: 'Users',
-        identifier: 'USERS#USERS_TAB',
+        identifier: 'USERS_MANAGEMENT#USERS_TAB',
         pages: [],
         features: [
           {
             id: 1,
             name: 'List Users',
             page_id: 2,
-            identifier: 'USERS#USERS_TAB#TAB_LIST_VIEW',
+            identifier: 'USERS_MANAGEMENT#USERS_TAB#TAB_LIST_VIEW',
           },
           {
             id: 2,
             name: 'Add User',
             page_id: 2,
-            identifier: 'USERS#USERS_TAB#ADD_USER',
+            identifier: 'USERS_MANAGEMENT#USERS_TAB#ADD_USER',
           },
           {
             id: 3,
             name: 'Edit User',
             page_id: 2,
-            identifier: 'USERS#USERS_TAB#EDIT_USER',
+            identifier: 'USERS_MANAGEMENT#USERS_TAB#EDIT_USER',
           },
         ],
         parent_id: 1,
@@ -34,20 +34,32 @@ exports.pagesAndFeatures = [
       {
         id: 3,
         name: 'Roles',
-        identifier: 'USERS#ROLES_TAB',
+        identifier: 'USERS_MANAGEMENT#ROLES_TAB',
         pages: [],
         features: [
           {
             id: 4,
             name: 'List Roles',
             page_id: 3,
-            identifier: 'USERS#ROLES_TAB#TAB_LIST_VIEW',
+            identifier: 'USERS_MANAGEMENT#ROLES_TAB#TAB_LIST_VIEW',
           },
           {
             id: 5,
             name: 'Add Role',
             page_id: 3,
-            identifier: 'USERS#ROLES_TAB#ADD_ROLE',
+            identifier: 'USERS_MANAGEMENT#ROLES_TAB#ADD_ROLE',
+          },
+          {
+            id: 6,
+            name: 'Edit Role',
+            page_id: 3,
+            identifier: 'USERS_MANAGEMENT#ROLES_TAB#EDIT_ROLE',
+          },
+          {
+            id: 7,
+            name: 'Delete Role',
+            page_id: 3,
+            identifier: 'USERS_MANAGEMENT#ROLES_TAB#DELETE_ROLE',
           },
         ],
         parent_id: 1,
@@ -58,69 +70,71 @@ exports.pagesAndFeatures = [
   },
   {
     id: 4,
-    name: 'Devices',
-    identifier: 'DEVICES',
+    name: 'Device Management Control',
+    identifier: 'DEVICES_MANAGEMENT',
     pages: [
       {
         id: 5,
-        name: 'Devices',
-        identifier: 'DEVICES#DEVICES_TAB',
-        pages: [
-          {
-            id: 6,
-            name: 'Manage Privileges',
-            identifier: 'DEVICES#DEVICES_TAB#MANAGE_PRIVILEGES',
-            pages: [],
-            features: [
-              {
-                id: 6,
-                name: 'View Personality Privileges',
-                page_id: 6,
-                identifier:
-                  'DEVICES#DEVICES_TAB#MANAGE_PRIVILEGES#VIEW_PRIVILEGES',
-              },
-              {
-                id: 7,
-                name: 'Add Privileges To personality',
-                page_id: 6,
-                identifier:
-                  'DEVICES#DEVICES_TAB#MANAGE_PRIVILEGES#ADD_PRIVILEGES',
-              },
-              {
-                id: 8,
-                name: 'Edit Personality Privileges',
-                page_id: 6,
-                identifier:
-                  'DEVICES#DEVICES_TAB#MANAGE_PRIVILEGES#EDIT_PRIVILEGES',
-              },
-            ],
-            parent_id: 5,
-          },
-        ],
+        name: 'Cars',
+        identifier: 'DEVICES_MANAGEMENT#CAR_TAB',
+        pages: [],
         features: [
           {
-            id: 9,
-            name: 'View List Device Types',
+            id: 8,
+            name: 'View List Car Types',
             page_id: 5,
-            identifier: 'DEVICES#DEVICES_TAB#TAB_LIST_VIEW',
+            identifier: 'DEVICES_MANAGEMENT#CAR_TAB#TAB_LIST_VIEW',
+          },
+          {
+            id: 9,
+            name: 'View List Cars',
+            page_id: 5,
+            identifier: 'DEVICES_MANAGEMENT#CAR_TAB#VIEW_CAR',
           },
           {
             id: 10,
-            name: 'View List Devices',
+            name: 'Add Car',
             page_id: 5,
-            identifier: 'DEVICES#DEVICES_TAB#VIEW_DEVICES',
+            identifier: 'DEVICES_MANAGEMENT#CAR_TAB#ADD_CAR',
           },
           {
             id: 11,
-            name: 'Add Devices',
+            name: 'Edit Car',
             page_id: 5,
-            identifier: 'DEVICES#DEVICES_TAB#ADD_DEVICES',
+            identifier: 'DEVICES_MANAGEMENT#CAR_TAB#EDIT_CAR',
           },
           {
             id: 12,
-            name: 'Edit Devices',
+            name: 'Delete Car',
             page_id: 5,
-            identifier: 'DEVICES#DEVICES_TAB#EDIT_DEVICES',
+            identifier: 'DEVICES_MANAGEMENT#CAR_TAB#DELETE_CAR',
+          },
+        ],
+        parent_id: 4,
+      },
+      {
+        id: 6,
+        name: 'Manage Privileges',
+        identifier: 'DEVICES_MANAGEMENT#MANAGE_PRIVILEGES',
+        pages: [],
+        features: [
+          {
+            id: 13,
+            name: 'View Personality Privileges',
+            page_id: 6,
+            identifier: 'DEVICES_MANAGEMENT#MANAGE_PRIVILEGES#VIEW_PRIVILEGES',
+          },
+          {
+            id: 14,
+            name: 'Add Privileges To personality',
+            page_id: 6,
+            identifier: 'DEVICES_MANAGEMENT#MANAGE_PRIVILEGES#ADD_PRIVILEGES',
+          },
+          {
+            id: 15,
+            name: 'Edit Personality Privileges',
+            page_id: 6,
+            identifier: 'DEVICES_MANAGEMENT#MANAGE_PRIVILEGES#EDIT_PRIVILEGES',
           },
         ],
         parent_id: 4,
@@ -131,92 +145,68 @@ exports.pagesAndFeatures = [
   },
   {
     id: 7,
-    name: 'Inventory',
-    identifier: 'INVENTORY',
-    pages: [
+    name: 'Inventory management control',
+    identifier: 'INVENTORY_MANAGEMENT',
+    pages: [],
+    features: [
       {
-        id: 8,
-        name: 'Inventory',
-        identifier: 'INVENTORY#INVENTORY_TAB',
-        pages: [],
-        features: [
-          {
-            id: 13,
-            name: 'View List Inventory',
-            page_id: 8,
-            identifier: 'INVENTORY#INVENTORY_TAB#TAB_LIST_VIEW',
-          },
-          {
-            id: 14,
-            name: 'Import CSV',
-            page_id: 8,
-            identifier: 'INVENTORY#INVENTORY_TAB#IMPORT_CSV',
-          },
-          {
-            id: 15,
-            name: 'CSV Import History',
-            page_id: 8,
-            identifier: 'INVENTORY#INVENTORY_TAB#IMPORT_HISTORY',
-          },
-        ],
-        parent_id: 7,
+        id: 16,
+        name: 'View List Inventory',
+        page_id: 7,
+        identifier: 'INVENTORY_MANAGEMENT#TAB_LIST_VIEW',
+      },
+      {
+        id: 17,
+        name: 'Import CSV',
+        page_id: 7,
+        identifier: 'INVENTORY_MANAGEMENT#IMPORT_CSV',
+      },
+      {
+        id: 18,
+        name: 'CSV Import History',
+        page_id: 7,
+        identifier: 'INVENTORY_MANAGEMENT#IMPORT_HISTORY',
       },
     ],
-    features: [],
     parent_id: null,
   },
   {
-    id: 9,
-    name: 'Distributions',
-    identifier: 'DISTRIBUTIONS',
-    pages: [
+    id: 8,
+    name: 'Distribution management control',
+    identifier: 'DISTRIBUTIONS_MANAGEMENT',
+    pages: [],
+    features: [
       {
-        id: 10,
-        name: 'Distribution',
-        identifier: 'DISTRIBUTIONS#DISTRIBUTIONS_TAB',
-        pages: [],
-        features: [
-          {
-            id: 16,
-            name: 'View List Distribution',
-            page_id: 10,
-            identifier: 'DISTRIBUTIONS#DISTRIBUTIONS_TAB#TAB_LIST_VIEW',
-          },
-          {
-            id: 17,
-            name: 'Add Distribution',
-            page_id: 10,
-            identifier: 'DISTRIBUTIONS#DISTRIBUTIONS_TAB#ADD_DISTRIBUTION',
-          },
-          {
-            id: 18,
-            name: 'Edit Distribution',
-            page_id: 10,
-            identifier: 'DISTRIBUTIONS#DISTRIBUTIONS_TAB#EDIT_DISTRIBUTION',
-          },
-          {
-            id: 19,
-            name: 'Assign Devices',
-            page_id: 10,
-            identifier: 'DISTRIBUTIONS#DISTRIBUTIONS_TAB#ASSIGN_DEVICES',
-          },
-          {
-            id: 20,
-            name: 'View Devices',
-            page_id: 10,
-            identifier: 'DISTRIBUTIONS#DISTRIBUTIONS_TAB#VIEW_DEVICES',
-          },
-          {
-            id: 21,
-            name: 'Unassign Devices',
-            page_id: 10,
-            identifier: 'DISTRIBUTIONS#DISTRIBUTIONS_TAB#UNASSIGN_DEVICES',
-          },
-        ],
-        parent_id: 9,
+        id: 19,
+        name: 'View List Distribution',
+        page_id: 8,
+        identifier: 'DISTRIBUTIONS_MANAGEMENT#TAB_LIST_VIEW',
+      },
+      {
+        id: 20,
+        name: 'Add Distribution',
+        page_id: 8,
+        identifier: 'DISTRIBUTIONS_MANAGEMENT#ADD_DISTRIBUTION',
+      },
+      {
+        id: 21,
+        name: 'Edit Distribution',
+        page_id: 8,
+        identifier: 'DISTRIBUTIONS_MANAGEMENT#EDIT_DISTRIBUTION',
+      },
+      {
+        id: 22,
+        name: 'Assign Devices',
+        page_id: 8,
+        identifier: 'DISTRIBUTIONS_MANAGEMENT#ASSIGN_DEVICES',
+      },
+      {
+        id: 23,
+        name: 'Unassign Devices',
+        page_id: 8,
+        identifier: 'DISTRIBUTIONS_MANAGEMENT#UNASSIGN_DEVICES',
       },
     ],
-    features: [],
     parent_id: null,
   },
 ];
