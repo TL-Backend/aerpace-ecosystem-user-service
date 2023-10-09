@@ -27,3 +27,8 @@ exports.successMessages = {
   DATA_FETCHED_MESSAGE: 'Data fetched successfully',
   USER_DELETED_MESSAGE: 'User deleted successfully',
 };
+
+exports.userType = {
+  USER: `USER`,
+  MEMBER: `MEMBER`,
+};
