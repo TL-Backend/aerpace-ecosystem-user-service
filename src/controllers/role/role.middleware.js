@@ -57,7 +57,7 @@ exports.validateUpdateRoleInput = async (req, res, next) => {
     const { role_name: roleName, permissions } = req.body;
     const errorsList = [];
 
-    if(!(roleName && permissions)) {
+    if(!(roleName || permissions)) {
       throw `Nothing to update here`;
     }
 
@@ -67,7 +67,7 @@ exports.validateUpdateRoleInput = async (req, res, next) => {
       );
     }
 
-    if (permissions &&  (typeof permissions !== 'object')) {
+    if (permissions &&  (typeof permissions !== 'object' || !permissions.length )) {
       errorsList.push(
         errorResponses.INVALID_OBJECT_OR_MISSING_ERROR('permissions'),
       );

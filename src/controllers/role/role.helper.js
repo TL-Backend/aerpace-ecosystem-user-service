@@ -309,44 +309,59 @@ exports.editRoleHelper = async ({ id, roleName, permissions }) => {
       }
     }
 
-    const uniquePermissions = [...new Set(permissions)];
+    if (permissions) {
+      const uniquePermissions = [...new Set(permissions)];
 
-    const featuresExists = await sequelize.query(
-      getFeaturesByIdentifiersQuery,
-      { replacements: { permissions: uniquePermissions } },
-    );
+      const featuresExists = await sequelize.query(
+        getFeaturesByIdentifiersQuery,
+        { replacements: { permissions: uniquePermissions } },
+      );
 
-    if (!featuresExists[0][0]?.result) {
-      logger.error('Invalid set permissions');
+      if (!featuresExists[0][0]?.result) {
+        logger.error('Invalid set permissions');
+        return {
+          success: false,
+          errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
+          message: errorResponses.INVALID_FEATURES,
+          data: null,
+        };
+      }
+
+      const { success, data, message } = await this.getMasterPermissionsTree();
+
+      if (!success) {
+        return {
+          success: false,
+          message: message || 'failed to fetch master permission tree',
+          errorCode: statusCodes.STATUS_CODE_FAILURE,
+          data: null,
+        };
+      }
+
+      const permission_tree = this.generatePermissionTree(
+        uniquePermissions,
+        data,
+      );
+
+      await aergov_roles.update(
+        {
+          role_name: roleName,
+          permission_list: uniquePermissions,
+          permission_tree: permission_tree,
+        },
+        { where: { id } },
+      );
+
       return {
-        success: false,
-        errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
-        message: errorResponses.INVALID_FEATURES,
-        data: null,
+        success: true,
+        data: { role_id: id },
+        message: successResponses.ROLE_UPDATED,
       };
     }
-
-    const { success, data, message } = await this.getMasterPermissionsTree();
-
-    if (!success) {
-      return {
-        success: false,
-        message: message || 'failed to fetch master permission tree',
-        errorCode: statusCodes.STATUS_CODE_FAILURE,
-        data: null,
-      };
-    }
-
-    const permission_tree = this.generatePermissionTree(
-      uniquePermissions,
-      data,
-    );
 
     await aergov_roles.update(
       {
         role_name: roleName,
-        permission_list: uniquePermissions,
-        permission_tree: permission_tree,
       },
       { where: { id } },
     );
