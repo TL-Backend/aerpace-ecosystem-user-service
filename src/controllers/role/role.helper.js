@@ -1,6 +1,8 @@
+const { Model } = require('sequelize');
 const {
   sequelize,
   aergov_roles,
+  aergov_user_roles,
 } = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
 const { redisKeys } = require('../../utils/constant');
 const { logger } = require('../../utils/logger');
@@ -10,6 +12,7 @@ const {
   listRolesQuery,
   listMasterRolesQuery,
   getFeaturesByIdentifiersQuery,
+  getRolesAndUserWithRole,
 } = require('./roles.querie');
 
 const Redis = require('ioredis');
@@ -377,6 +380,56 @@ exports.editRoleHelper = async ({ id, roleName, permissions }) => {
       success: false,
       data: null,
       message: errorResponses.INTERNAL_ERROR,
+    };
+  }
+};
+
+exports.deleteRoleHelper = async (roleId) => {
+  try {
+    const roleData = await aergov_roles.findOne({
+      where: {
+        id: roleId,
+      },
+    });
+    if (!roleData) {
+      return {
+        success: false,
+        errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
+        message: errorResponses.ROLE_NOT_FOUND,
+        data: null,
+      };
+    }
+    const userRoleData = await aergov_user_roles.findAll({
+      where: {
+        role_id: roleId,
+      },
+    });
+    if (userRoleData.length > 0) {
+      return {
+        success: false,
+        errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
+        message: errorResponses.ROLE_ASSIGNED_TO_USER,
+        data: null,
+      };
+    }
+    await aergov_roles.destroy({
+      where: {
+        id: roleId,
+      },
+    });
+    return {
+      success: true,
+      errorCode: statusCodes.STATUS_CODE_SUCCESS,
+      message: successResponses.ROLE_DELETED,
+      data: null,
+    };
+  } catch (err) {
+    logger.error(err.message);
+    return {
+      success: false,
+      message: err.message,
+      errorCode: statusCodes.STATUS_CODE_FAILURE,
+      data: null,
     };
   }
 };

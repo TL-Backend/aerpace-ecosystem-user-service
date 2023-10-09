@@ -1,6 +1,7 @@
 const {
   listRoles,
   createRole,
+  deleteRole,
   editRole,
 } = require('../controllers/role/role.controller');
 
@@ -12,5 +13,6 @@ const {
 module.exports = function (app) {
   app.get('/roles', listRoles);
   app.post('/roles', validateRoleInput, createRole);
+  app.delete('/roles/:id', deleteRole);
   app.patch('/roles/:id', validateUpdateRoleInput, editRole);
 };
