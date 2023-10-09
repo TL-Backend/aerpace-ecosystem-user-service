@@ -58,7 +58,7 @@ exports.validateUpdateRoleInput = async (req, res, next) => {
     const errorsList = [];
 
     if(!(roleName || permissions)) {
-      throw `Nothing to update here`;
+      throw errorResponses.NOTHING_TO_UPDATE;
     }
 
     if (roleName && ( typeof roleName !== 'string')) {

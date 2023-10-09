@@ -20,4 +20,5 @@ exports.errorResponses = {
   ROLE_CREATION_FAILED: 'Failed to create a role',
   PAGES_OR_FEATURES_NOT_FOUND: 'Pages or features not found',
   ROLE_NOT_FOUND: `Role not found`,
+  NOTHING_TO_UPDATE: `Nothing to update here`,
 };
