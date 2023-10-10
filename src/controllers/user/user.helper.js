@@ -2,6 +2,7 @@ const {
   aergov_users,
   sequelize,
   aergov_user_roles,
+  Sequelize,
 } = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
 const { dbTables } = require('../../utils/constant');
 const { sendTemporaryPasswordEmail } = require('../../utils/emailSender');
@@ -218,8 +219,15 @@ exports.validateDataInDBById = async (id_key, table) => {
 exports.getUsersListHelper = async ({ search_key, page_limit, page_number, role, location }) => {
   try {
     let filterOptionsResult;
+    let rolesList = role ? role.split(',') : null
+    let locationsList = location ? location.split(',') : null
     const query = getListUsersQuery({ search_key, page_limit, page_number, role, location });
-    const data = await sequelize.query(query);
+    const data = await sequelize.query(query, {
+      replacements: {
+        roleList: rolesList,
+        locationList: locationsList
+      },
+    });
     let totalPages = Math.round(
       parseInt(data[0][0]?.data_count || 0) / parseInt(page_limit || 10),
     );

@@ -31,30 +31,12 @@ exports.getListUsersQuery = ({ search_key, pageLimit, pageNumber, role, location
     querySearchCondition = `AND ( usr.first_name ILIKE '%${search_key}%' OR usr.last_name ILIKE '%${search_key}%' OR r.role_name ILIKE '%${search_key}%' OR usr.state ILIKE '%${search_key}%' OR usr.country_code ILIKE '%${search_key}%' OR usr.phone_number ILIKE '%${search_key}%' OR usr.email ILIKE '%${search_key}%' )`;
   }
   if (role) {
-    roleFilterCondition += ` (`
-    let rolesList = role.split(',')
-    const roleFilterArray = []
-    for (let index = 0; index < rolesList.length; index++) {
-      const roleElement = rolesList[index];
-      roleFilterArray.push(` r.role_name = '${roleElement.trim()}' `)
-    }
-    const roleString = roleFilterArray.join('OR')
-    roleFilterCondition += roleString
-    roleFilterCondition += ` )`
+    roleFilterCondition = `AND r.role_name = ANY(ARRAY [:roleList])`
   }
   if (location) {
-    locationFilterCondition += `AND (`
-    let locationList = location.split(',')
-    const locationFilterArray = []
-    for (let index = 0; index < locationList.length; index++) {
-      const locationElement = locationList[index];
-      locationFilterArray.push(` usr.state = '${locationElement.trim()}' `)
-    }
-    const locationString = locationFilterArray.join('OR')
-    locationFilterCondition += locationString
-    locationFilterCondition += ` )`
+    locationFilterCondition = `AND usr.state = ANY(ARRAY [:locationList])`
   }
-  filterCondition = `AND ${roleFilterCondition} ${locationFilterCondition}`
+  filterCondition = ` ${roleFilterCondition} ${locationFilterCondition}`
 
   queryPagination = getPaginationQuery({ pageLimit, pageNumber });
   return `

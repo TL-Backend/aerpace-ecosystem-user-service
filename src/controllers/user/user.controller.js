@@ -77,7 +77,7 @@ exports.editUser = async (req, res) => {
 exports.getUsersList = async (req, res) => {
   try {
     const { search, page_limit, page_number, role, location } = req.query;
-    const user = await getUsersListHelper({ search, page_limit, page_number, role, location });
+    const user = await getUsersListHelper({ search_key: search, page_limit, page_number, role, location });
     if (!user.success) {
       logger.error(user.data);
       return errorResponse({
