@@ -25,7 +25,7 @@ exports.getListUsersQuery = (search_key, pageLimit, pageNumber) => {
   let querySearchCondition = ``;
   let queryPagination = ' ';
   if (search_key) {
-    querySearchCondition = `AND ( usr.first_name ILIKE '%${search_key}%' OR usr.last_name ILIKE '%${search_key}%' OR r.role_name ILIKE '%${search_key}%' OR usr.state ILIKE '%${search_key}%' )`;
+    querySearchCondition = `AND ( usr.first_name ILIKE '%${search_key}%' OR usr.last_name ILIKE '%${search_key}%' OR r.role_name ILIKE '%${search_key}%' OR usr.state ILIKE '%${search_key}%' OR usr.country_code ILIKE '%${search_key}%' OR usr.phone_number ILIKE '%${search_key}%' OR usr.email ILIKE '%${search_key}%' )`;
   }
   queryPagination = getPaginationQuery({ pageLimit, pageNumber });
   return `
