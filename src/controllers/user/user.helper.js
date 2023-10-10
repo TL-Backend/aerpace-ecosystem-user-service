@@ -17,6 +17,7 @@ const {
   getListUsersQuery,
   getUserRoleId,
   getUserByEmailQuery,
+  getRoleFilterQuery,
 } = require('./user.query');
 
 exports.addUserHelper = async (user) => {
@@ -214,13 +215,19 @@ exports.validateDataInDBById = async (id_key, table) => {
   }
 };
 
-exports.getUsersListHelper = async (search_key, page_limit, page_number) => {
+exports.getUsersListHelper = async ({ search_key, page_limit, page_number, role, location }) => {
   try {
-    const query = getListUsersQuery(search_key, page_limit, page_number);
+    let filterOptionsResult;
+    const query = getListUsersQuery({ search_key, page_limit, page_number, role, location });
     const data = await sequelize.query(query);
     let totalPages = Math.round(
       parseInt(data[0][0]?.data_count || 0) / parseInt(page_limit || 10),
     );
+    if (page_number === '1' || !page_number) {
+      filterOptionsData = getRoleFilterQuery;
+      filterData = await sequelize.query(filterOptionsData);
+      filterOptionsResult = filterData[0][0].result
+    }
     return {
       success: true,
       data: {
@@ -229,6 +236,7 @@ exports.getUsersListHelper = async (search_key, page_limit, page_number) => {
         page_limit: parseInt(page_limit) || 10,
         page_number: parseInt(page_number) || 1,
         total_pages: totalPages !== 0 ? totalPages : 1,
+        filters: filterOptionsResult ? filterOptionsResult : {}
       },
       message: messages.successMessages.USERS_FETCHED_MESSAGE,
     };

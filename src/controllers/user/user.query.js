@@ -21,12 +21,41 @@ exports.getUserRoleId = `SELECT id
   WHERE user_id = :user_id AND role_id = :role_id
   `;
 
-exports.getListUsersQuery = (search_key, pageLimit, pageNumber) => {
+exports.getListUsersQuery = ({ search_key, pageLimit, pageNumber, role, location }) => {
   let querySearchCondition = ``;
-  let queryPagination = ' ';
+  let filterCondition = ``;
+  let queryPagination = ` `;
+  let roleFilterCondition = ``
+  let locationFilterCondition = ``
   if (search_key) {
     querySearchCondition = `AND ( usr.first_name ILIKE '%${search_key}%' OR usr.last_name ILIKE '%${search_key}%' OR r.role_name ILIKE '%${search_key}%' OR usr.state ILIKE '%${search_key}%' OR usr.country_code ILIKE '%${search_key}%' OR usr.phone_number ILIKE '%${search_key}%' OR usr.email ILIKE '%${search_key}%' )`;
   }
+  if (role) {
+    roleFilterCondition += ` (`
+    let rolesList = role.split(',')
+    const roleFilterArray = []
+    for (let index = 0; index < rolesList.length; index++) {
+      const roleElement = rolesList[index];
+      roleFilterArray.push(` r.role_name = '${roleElement.trim()}' `)
+    }
+    const roleString = roleFilterArray.join('OR')
+    roleFilterCondition += roleString
+    roleFilterCondition += ` )`
+  }
+  if (location) {
+    locationFilterCondition += `AND (`
+    let locationList = location.split(',')
+    const locationFilterArray = []
+    for (let index = 0; index < locationList.length; index++) {
+      const locationElement = locationList[index];
+      locationFilterArray.push(` usr.state = '${locationElement.trim()}' `)
+    }
+    const locationString = locationFilterArray.join('OR')
+    locationFilterCondition += locationString
+    locationFilterCondition += ` )`
+  }
+  filterCondition = `AND ${roleFilterCondition} ${locationFilterCondition}`
+
   queryPagination = getPaginationQuery({ pageLimit, pageNumber });
   return `
   SELECT
@@ -46,6 +75,7 @@ exports.getListUsersQuery = (search_key, pageLimit, pageNumber) => {
   LEFT JOIN ${dbTables.ROLES_TABLE} as r ON r.id = urole.role_id
   WHERE usr.user_type = '${userType.USER}' 
   ${querySearchCondition}
+  ${filterCondition}
   GROUP BY 
     usr.id, 
     usr.first_name, 
@@ -62,3 +92,12 @@ exports.getListUsersQuery = (search_key, pageLimit, pageNumber) => {
   ${queryPagination};
 `;
 };
+
+exports.getRoleFilterQuery = `
+SELECT
+JSON_BUILD_OBJECT(
+  'roles', JSON_AGG(DISTINCT role_name),
+  'locations', JSON_AGG(DISTINCT state)
+) AS result
+FROM aergov_roles AS ar,  aergov_users As au;
+`
