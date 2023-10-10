@@ -18,7 +18,7 @@ exports.getUserByEmailQuery = `SELECT *
 
 exports.getUserRoleId = `SELECT id
   FROM ${dbTables.USER_ROLES_TABLE}
-  WHERE user_id = :user_id AND role_id = :role_id
+  WHERE user_id = :user_id
   `;
 
 exports.getListUsersQuery = ({ search_key, pageLimit, pageNumber, role, location }) => {

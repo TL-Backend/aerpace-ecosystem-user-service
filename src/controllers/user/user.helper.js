@@ -124,17 +124,17 @@ exports.editUserHelper = async (user, id) => {
     if (user.role_id) {
       const query = getUserRoleId;
       const data = await sequelize.query(query, {
-        replacements: { user_id: id, role_id: user.role_id },
+        replacements: { user_id: id },
         type: sequelize.QueryTypes.SELECT,
       });
       if (data[0]?.id) {
-        await aergov_users.update(
+        await aergov_user_roles.update(
           {
             user_id: id,
             role_id: user.role_id,
           },
           {
-            where: { id: data.id },
+            where: { id: data[0]?.id },
             returning: true,
           },
           { transaction },
