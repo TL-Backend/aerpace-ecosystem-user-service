@@ -3,7 +3,7 @@ const { dbTables } = require('../../utils/constant');
 exports.listRolesQuery = (params) => {
   let querySearchCondition = '';
   if (params.search) {
-    querySearchCondition = `WHERE role_name ILIKE '%${params.search}%'`;
+    querySearchCondition = `WHERE role_name ILIKE :search`;
   }
 
   const query = `
