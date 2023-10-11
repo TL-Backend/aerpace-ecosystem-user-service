@@ -1,3 +1,7 @@
+const environment = process.env.NODE_ENV || 'development';
+const envFilePath = `${environment}.env`;
+require('dotenv').config({ path: envFilePath });
+
 const { pagesAndFeatures } = require('./pages');
 const {
   sequelize,
