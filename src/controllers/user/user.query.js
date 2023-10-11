@@ -18,15 +18,39 @@ exports.getUserByEmailQuery = `SELECT *
 
 exports.getUserRoleId = `SELECT id
   FROM ${dbTables.USER_ROLES_TABLE}
-  WHERE user_id = :user_id AND role_id = :role_id
+  WHERE user_id = :user_id
   `;
 
-exports.getListUsersQuery = (search_key, pageLimit, pageNumber) => {
+exports.getListUsersQuery = ({
+  search,
+  pageLimit,
+  pageNumber,
+  role,
+  location,
+}) => {
   let querySearchCondition = ``;
-  let queryPagination = ' ';
-  if (search_key) {
-    querySearchCondition = `AND ( usr.first_name ILIKE '%${search_key}%' OR usr.last_name ILIKE '%${search_key}%' OR r.role_name ILIKE '%${search_key}%' OR usr.state ILIKE '%${search_key}%' )`;
+  let filterCondition = ``;
+  let queryPagination = ``;
+  let roleFilterCondition = ``;
+  let locationFilterCondition = ``;
+  if (search) {
+    querySearchCondition = `AND (
+       usr.first_name ILIKE :search
+       OR usr.last_name ILIKE :search
+       OR r.role_name ILIKE :search
+       OR usr.state ILIKE :search
+       OR usr.country_code ILIKE :search
+       OR usr.phone_number ILIKE :search
+       OR usr.email ILIKE :search )`;
   }
+  if (role) {
+    roleFilterCondition = `AND r.role_name = ANY(ARRAY [:roleList])`;
+  }
+  if (location) {
+    locationFilterCondition = `AND usr.state = ANY(ARRAY [:locationList])`;
+  }
+  filterCondition = ` ${roleFilterCondition} ${locationFilterCondition}`;
+
   queryPagination = getPaginationQuery({ pageLimit, pageNumber });
   return `
   SELECT
@@ -46,6 +70,7 @@ exports.getListUsersQuery = (search_key, pageLimit, pageNumber) => {
   LEFT JOIN ${dbTables.ROLES_TABLE} as r ON r.id = urole.role_id
   WHERE usr.user_type = '${userType.USER}' 
   ${querySearchCondition}
+  ${filterCondition}
   GROUP BY 
     usr.id, 
     usr.first_name, 
@@ -58,7 +83,16 @@ exports.getListUsersQuery = (search_key, pageLimit, pageNumber) => {
     usr.state, 
     r.role_name, 
     r.id
-  ORDER BY usr.created_at DESC
+  ORDER BY usr.created_at DESC 
   ${queryPagination};
 `;
 };
+
+exports.getRoleFilterQuery = `
+SELECT
+JSON_BUILD_OBJECT(
+  'roles', JSON_AGG(DISTINCT role_name),
+  'locations', JSON_AGG(DISTINCT state)
+) AS result
+FROM aergov_roles AS ar,  aergov_users As au;
+`;
