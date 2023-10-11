@@ -216,25 +216,39 @@ exports.validateDataInDBById = async (id_key, table) => {
   }
 };
 
-exports.getUsersListHelper = async ({ search_key, page_limit, page_number, role, location }) => {
+exports.getUsersListHelper = async ({
+  search,
+  page_limit,
+  page_number,
+  role,
+  location,
+}) => {
   try {
     let filterOptionsResult;
-    let rolesList = role ? role.split(',') : null
-    let locationsList = location ? location.split(',') : null
-    const query = getListUsersQuery({ search_key, page_limit, page_number, role, location });
+    let rolesList = role ? role.split(',') : null;
+    let locationsList = location ? location.split(',') : null;
+    let searchValues = search ? `%${search}%` : null;
+    const query = getListUsersQuery({
+      search,
+      page_limit,
+      page_number,
+      role,
+      location,
+    });
     const data = await sequelize.query(query, {
       replacements: {
         roleList: rolesList,
-        locationList: locationsList
+        locationList: locationsList,
+        search: searchValues,
       },
     });
     let totalPages = Math.round(
       parseInt(data[0][0]?.data_count || 0) / parseInt(page_limit || 10),
     );
     if (page_number === '1' || !page_number) {
-      filterOptionsData = getRoleFilterQuery;
-      filterData = await sequelize.query(filterOptionsData);
-      filterOptionsResult = filterData[0][0].result
+      let filterOptionsData = getRoleFilterQuery;
+      let filterData = await sequelize.query(filterOptionsData);
+      filterOptionsResult = filterData[0][0].result;
     }
     return {
       success: true,
@@ -244,7 +258,7 @@ exports.getUsersListHelper = async ({ search_key, page_limit, page_number, role,
         page_limit: parseInt(page_limit) || 10,
         page_number: parseInt(page_number) || 1,
         total_pages: totalPages !== 0 ? totalPages : 1,
-        filters: filterOptionsResult ? filterOptionsResult : {}
+        filters: filterOptionsResult ? filterOptionsResult : {},
       },
       message: messages.successMessages.USERS_FETCHED_MESSAGE,
     };

@@ -21,22 +21,35 @@ exports.getUserRoleId = `SELECT id
   WHERE user_id = :user_id
   `;
 
-exports.getListUsersQuery = ({ search_key, pageLimit, pageNumber, role, location }) => {
+exports.getListUsersQuery = ({
+  search,
+  pageLimit,
+  pageNumber,
+  role,
+  location,
+}) => {
   let querySearchCondition = ``;
   let filterCondition = ``;
-  let queryPagination = ` `;
-  let roleFilterCondition = ``
-  let locationFilterCondition = ``
-  if (search_key) {
-    querySearchCondition = `AND ( usr.first_name ILIKE '%${search_key}%' OR usr.last_name ILIKE '%${search_key}%' OR r.role_name ILIKE '%${search_key}%' OR usr.state ILIKE '%${search_key}%' OR usr.country_code ILIKE '%${search_key}%' OR usr.phone_number ILIKE '%${search_key}%' OR usr.email ILIKE '%${search_key}%' )`;
+  let queryPagination = ``;
+  let roleFilterCondition = ``;
+  let locationFilterCondition = ``;
+  if (search) {
+    querySearchCondition = `AND (
+       usr.first_name ILIKE :search
+       OR usr.last_name ILIKE :search
+       OR r.role_name ILIKE :search
+       OR usr.state ILIKE :search
+       OR usr.country_code ILIKE :search
+       OR usr.phone_number ILIKE :search
+       OR usr.email ILIKE :search )`;
   }
   if (role) {
-    roleFilterCondition = `AND r.role_name = ANY(ARRAY [:roleList])`
+    roleFilterCondition = `AND r.role_name = ANY(ARRAY [:roleList])`;
   }
   if (location) {
-    locationFilterCondition = `AND usr.state = ANY(ARRAY [:locationList])`
+    locationFilterCondition = `AND usr.state = ANY(ARRAY [:locationList])`;
   }
-  filterCondition = ` ${roleFilterCondition} ${locationFilterCondition}`
+  filterCondition = ` ${roleFilterCondition} ${locationFilterCondition}`;
 
   queryPagination = getPaginationQuery({ pageLimit, pageNumber });
   return `
@@ -70,7 +83,7 @@ exports.getListUsersQuery = ({ search_key, pageLimit, pageNumber, role, location
     usr.state, 
     r.role_name, 
     r.id
-  ORDER BY usr.created_at DESC
+  ORDER BY usr.created_at DESC 
   ${queryPagination};
 `;
 };
@@ -82,4 +95,4 @@ JSON_BUILD_OBJECT(
   'locations', JSON_AGG(DISTINCT state)
 ) AS result
 FROM aergov_roles AS ar,  aergov_users As au;
-`
+`;
