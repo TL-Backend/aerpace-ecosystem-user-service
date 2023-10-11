@@ -23,8 +23,8 @@ exports.getUserRoleId = `SELECT id
 
 exports.getListUsersQuery = ({
   search,
-  pageLimit,
-  pageNumber,
+  page_limit: pageLimit,
+  page_number: pageNumber,
   role,
   location,
 }) => {
