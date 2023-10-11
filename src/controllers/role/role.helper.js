@@ -26,8 +26,13 @@ exports.listRolesHelper = async (search = '') => {
     if (search) {
       params.search = search;
     }
+    let searchValues = params.search ? `%${params.search}%` : null;
     const fetchRolesQuery = listRolesQuery(params);
-    const roles = await sequelize.query(fetchRolesQuery);
+    const roles = await sequelize.query(fetchRolesQuery,{
+      replacements: {
+        search: searchValues
+      }
+    });
     return {
       success: true,
       data: { roles: roles[0] },
