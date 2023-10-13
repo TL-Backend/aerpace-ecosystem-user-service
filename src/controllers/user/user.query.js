@@ -35,8 +35,7 @@ exports.getListUsersQuery = ({
   let locationFilterCondition = ``;
   if (search) {
     querySearchCondition = `AND (
-       usr.first_name ILIKE :search
-       OR usr.last_name ILIKE :search
+       usr.first_name || ' ' || usr.last_name LIKE :search
        OR r.role_name ILIKE :search
        OR usr.state ILIKE :search
        OR usr.country_code ILIKE :search
