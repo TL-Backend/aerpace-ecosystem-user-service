@@ -31,7 +31,7 @@ exports.configHelper = async (params) => {
       success: true,
       data: {
         master_permissions: data,
-        role: rolePermissions[0][0]?.permission_tree[0] || {},
+        role: rolePermissions[0][0] || {},
         enums: constants,
       },
       message: successResponses.CONFIG_FETCHED,
