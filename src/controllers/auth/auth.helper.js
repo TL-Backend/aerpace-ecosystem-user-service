@@ -83,6 +83,12 @@ exports.getValidUserWithRoleDetails = async ({ email, app }) => {
       app == appType.ADMIN_PORTAL &&
       userRolesData[0].user_type == userType.USER
     ) {
+      const landingPage = this.getLandingPage({
+        permissions: userRolesData[0].permission_tree,
+      });
+
+      userRolesData[0].landing_page = landingPage;
+
       return {
         success: true,
         message: successResponses.DATA_FETCH_SUCCESSFUL,
@@ -292,4 +298,42 @@ exports.changeTemporarayPassword = async ({
       data: null,
     };
   }
+}
+
+exports.getLandingPage = ({ permissions }) => {
+  let landingPage = this.getLandingPageRoute({ permissions: permissions[0] });
+
+  landingPage = landingPage
+    ? this.convertToValidRoute({route: landingPage})
+    : 'access-denied';
+
+  return landingPage;
+};
+
+exports.getLandingPageRoute = ({ permissions }) => {
+  if (permissions) {
+    if (permissions.pages && permissions.pages.length > 0) {
+      let landingPage = this.getLandingPageRoute({
+        permissions: permissions.pages[0],
+      });
+      if (landingPage) return landingPage;
+    } else {
+      return permissions.name;
+    }
+  }
+  return 'access-denied';
+};
+
+exports.convertToValidRoute = ({route}) => {
+
+  const words = route.split(' ');
+  const list = `${
+    words[0].toLowerCase() +
+    words
+      .slice(1)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join('')
+  }`;
+
+  return list
 };
