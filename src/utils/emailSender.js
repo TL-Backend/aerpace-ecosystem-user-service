@@ -13,7 +13,7 @@ exports.mailService = async ({ params }) => {
 };
 
 exports.sendEmail = async ({ email, resetUuid }) => {
-  try{
+  try {
     const resetLink = `${process.env.CHANGE_PASSWORD_URL}?uuid=${resetUuid}`;
     const emailContent = this.emailConstants.RESET_LINK_EMAIL_CONTENT.replace(
       '$resetLink',
@@ -39,8 +39,8 @@ exports.sendEmail = async ({ email, resetUuid }) => {
       ReplyToAddresses: [this.emailConstants.REPLY_TO_EMAIL],
     };
     await this.mailService({ params });
-  }catch(err){
-    logger.error(err)
+  } catch (err) {
+    logger.error(err.message);
   }
 };
 
@@ -71,10 +71,10 @@ exports.sendTemporaryPasswordEmail = async ({ email, temporaryPassword }) => {
       ReplyToAddresses: [this.emailConstants.REPLY_TO_EMAIL],
     };
     await this.mailService({ params });
-    return true
+    return true;
   } catch (err) {
-    logger.error(err)
-    return false
+    logger.error(err.message);
+    return false;
   }
 };
 

@@ -6,6 +6,7 @@ const {
   addUserHelper,
   editUserHelper,
   getUsersListHelper,
+  hardDeleteUserHelper,
 } = require('./user.helper');
 const { statusCodes } = require('../../utils/statusCode');
 const { logger } = require('../../utils/logger');
@@ -26,14 +27,14 @@ exports.addUser = async (req, res) => {
       });
     }
     return successResponse({
-      data: user.data,  
+      data: user.data,
       req,
       res,
       message: messages.successMessages.USER_ADDED_MESSAGE,
       code: statusCodes.STATUS_CODE_SUCCESS,
     });
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return errorResponse({
       req,
       res,
@@ -64,7 +65,7 @@ exports.editUser = async (req, res) => {
       code: statusCodes.STATUS_CODE_SUCCESS,
     });
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return errorResponse({
       req,
       res,
@@ -75,8 +76,14 @@ exports.editUser = async (req, res) => {
 
 exports.getUsersList = async (req, res) => {
   try {
-    const { search, page_limit, page_number } = req.query;
-    const user = await getUsersListHelper(search, page_limit, page_number);
+    const { search, page_limit, page_number, role, location } = req.query;
+    const user = await getUsersListHelper({
+      search,
+      page_limit,
+      page_number,
+      role,
+      location,
+    });
     if (!user.success) {
       logger.error(user.data);
       return errorResponse({
@@ -94,7 +101,35 @@ exports.getUsersList = async (req, res) => {
       code: statusCodes.STATUS_CODE_SUCCESS,
     });
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
+    return errorResponse({
+      req,
+      res,
+      code: statusCodes.STATUS_CODE_FAILURE,
+    });
+  }
+};
+
+exports.hardDeleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { success, errorCode, message } = await hardDeleteUserHelper({ id });
+    if (!success) {
+      return errorResponse({
+        req,
+        res,
+        code: errorCode,
+        message: message,
+      });
+    }
+    return successResponse({
+      req,
+      res,
+      message: message,
+      code: statusCodes.STATUS_CODE_SUCCESS,
+    });
+  } catch (err) {
+    logger.error(err.message);
     return errorResponse({
       req,
       res,

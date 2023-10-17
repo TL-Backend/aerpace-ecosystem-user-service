@@ -1,8 +1,8 @@
 exports.successResponses = {
-  PERMISSION_TREE_FETCHED: `fetched master permission tree successfully`,
-  CONFIG_FETCHED: `config files fetched successfully`,
+  PERMISSION_TREE_FETCHED: `Fetched master permission tree successfully`,
+  CONFIG_FETCHED: `Config files fetched successfully`,
 };
 
 exports.errorResponses = {
-  INTERNAL_ERROR: 'Internal error',
+  INTERNAL_ERROR: 'Something went wrong',
 };

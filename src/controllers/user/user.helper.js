@@ -2,11 +2,15 @@ const {
   aergov_users,
   sequelize,
   aergov_user_roles,
+  Sequelize,
 } = require('../../services/aerpace-ecosystem-backend-db/src/databases/postgresql/models');
 const { dbTables } = require('../../utils/constant');
 const { sendTemporaryPasswordEmail } = require('../../utils/emailSender');
 const { logger } = require('../../utils/logger');
-const { generateTemporaryPassword, hashPassword } = require('../../utils/passwordHandler');
+const {
+  generateTemporaryPassword,
+  hashPassword,
+} = require('../../utils/passwordHandler');
 const { statusCodes } = require('../../utils/statusCode');
 const messages = require('./user.constant');
 const {
@@ -14,6 +18,7 @@ const {
   getListUsersQuery,
   getUserRoleId,
   getUserByEmailQuery,
+  getRoleFilterQuery,
 } = require('./user.query');
 
 exports.addUserHelper = async (user) => {
@@ -34,7 +39,7 @@ exports.addUserHelper = async (user) => {
     if (!user.user_type) user.user_type = 'USER';
     const userExist = await this.checkUserExistWithEmail(
       user.email,
-      user.user_type
+      user.user_type,
     );
     if (userExist.data || !userExist.success) {
       return {
@@ -45,9 +50,9 @@ exports.addUserHelper = async (user) => {
       };
     }
     user.first_time_login = 1;
-    const temporaryPassword = await generateTemporaryPassword()
+    const temporaryPassword = await generateTemporaryPassword();
     const hashedPassword = await hashPassword({ password: temporaryPassword });
-    user.password = hashedPassword
+    user.password = hashedPassword;
     const userData = await aergov_users.create(user, { transaction });
     if (userData) {
       await aergov_user_roles.create(
@@ -58,17 +63,21 @@ exports.addUserHelper = async (user) => {
         { transaction },
       );
       transaction.commit();
-      await sendTemporaryPasswordEmail({email: userData.email,temporaryPassword })
-      delete user.password
-      delete user.first_time_login
+      await sendTemporaryPasswordEmail({
+        email: userData.email,
+        temporaryPassword,
+      });
+      user.id = userData.id;
+      delete user.password;
+      delete user.first_time_login;
       return {
         success: true,
         message: messages.successMessages.USER_ADDED_MESSAGE,
-        data: user
+        data: user,
       };
     }
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     transaction.rollback();
     return {
       success: false,
@@ -87,7 +96,7 @@ exports.editUserHelper = async (user, id) => {
       return {
         success: false,
         errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
-        message: messages.errorMessages.INVAILD_USER_ID_MESSAGE,
+        message: messages.errorMessages.INVALID_USER_ID_MESSAGE,
         data: null,
       };
     }
@@ -116,17 +125,17 @@ exports.editUserHelper = async (user, id) => {
     if (user.role_id) {
       const query = getUserRoleId;
       const data = await sequelize.query(query, {
-        replacements: { user_id: id, role_id: user.role_id },
+        replacements: { user_id: id },
         type: sequelize.QueryTypes.SELECT,
       });
       if (data[0]?.id) {
-        await aergov_users.update(
+        await aergov_user_roles.update(
           {
             user_id: id,
             role_id: user.role_id,
           },
           {
-            where: { id: data.id },
+            where: { id: data[0]?.id },
             returning: true,
           },
           { transaction },
@@ -150,7 +159,7 @@ exports.editUserHelper = async (user, id) => {
       };
     }
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     transaction.rollback();
     return {
       success: false,
@@ -174,7 +183,7 @@ exports.checkUserExistWithEmail = async (email, user_type) => {
       data: data[0],
     };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
@@ -197,7 +206,7 @@ exports.validateDataInDBById = async (id_key, table) => {
       data: data[0],
     };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
@@ -207,13 +216,40 @@ exports.validateDataInDBById = async (id_key, table) => {
   }
 };
 
-exports.getUsersListHelper = async (search_key, page_limit, page_number) => {
+exports.getUsersListHelper = async ({
+  search,
+  page_limit,
+  page_number,
+  role,
+  location,
+}) => {
   try {
-    const query = getListUsersQuery(search_key, page_limit, page_number);
-    const data = await sequelize.query(query);
+    let filterOptionsResult;
+    let rolesList = role ? role.split(',') : null;
+    let locationsList = location ? location.split(',') : null;
+    let searchValues = search ? `%${search}%` : null;
+    const query = getListUsersQuery({
+      search,
+      page_limit,
+      page_number,
+      role,
+      location,
+    });
+    const data = await sequelize.query(query, {
+      replacements: {
+        roleList: rolesList,
+        locationList: locationsList,
+        search: searchValues,
+      },
+    });
     let totalPages = Math.round(
       parseInt(data[0][0]?.data_count || 0) / parseInt(page_limit || 10),
     );
+    if (page_number === '1' || !page_number) {
+      let filterOptionsData = getRoleFilterQuery;
+      let filterData = await sequelize.query(filterOptionsData);
+      filterOptionsResult = filterData[0][0].result;
+    }
     return {
       success: true,
       data: {
@@ -222,15 +258,53 @@ exports.getUsersListHelper = async (search_key, page_limit, page_number) => {
         page_limit: parseInt(page_limit) || 10,
         page_number: parseInt(page_number) || 1,
         total_pages: totalPages !== 0 ? totalPages : 1,
+        filters: filterOptionsResult ? filterOptionsResult : {},
       },
       message: messages.successMessages.USERS_FETCHED_MESSAGE,
     };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
       message: messages.errorMessages.FETCHING_USERS_ERROR_FOUND,
+      data: null,
+    };
+  }
+};
+
+exports.hardDeleteUserHelper = async ({ id }) => {
+  try {
+    const userData = await aergov_users.findOne({
+      where: {
+        id,
+      },
+    });
+    if (!userData) {
+      return {
+        success: false,
+        errorCode: statusCodes.STATUS_CODE_DATA_NOT_FOUND,
+        message: messages.errorMessages.USER_NOT_FOUND,
+        data: null,
+      };
+    }
+    await aergov_users.destroy({
+      where: {
+        id: userData.id,
+      },
+    });
+    return {
+      success: true,
+      errorCode: statusCodes.STATUS_CODE_SUCCESS,
+      message: messages.successMessages.USER_DELETED_MESSAGE,
+      data: null,
+    };
+  } catch (err) {
+    logger.error(err.message);
+    return {
+      success: false,
+      errorCode: statusCodes.STATUS_CODE_FAILURE,
+      message: err.message,
       data: null,
     };
   }

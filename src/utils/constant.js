@@ -14,3 +14,7 @@ exports.expirationTime = {
   ID_TOKEN: '4h',
   REFRESH_TOKEN: '30d',
 };
+
+exports.levelStarting = {
+  distribution: 'dr_',
+};

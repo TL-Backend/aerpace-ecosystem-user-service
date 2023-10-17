@@ -1,3 +1,7 @@
+const environment = process.env.NODE_ENV || 'development';
+const envFilePath = `${environment}.env`;
+require('dotenv').config({ path: envFilePath });
+
 const { pagesAndFeatures } = require('./pages');
 const {
   sequelize,
@@ -27,7 +31,7 @@ const flattenPagesAndFeatures = (pages, pagesArray, featuresArray) => {
       }
     });
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return err;
   }
 };
@@ -41,7 +45,7 @@ const extractPagesAndFeatures = (pagesAndFeatures) => {
 
     return { pages, features };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return err;
   }
 };
@@ -65,7 +69,7 @@ const masterPagesAndFeaturesDump = async ({ pagesAndFeatures }) => {
     return;
   } catch (err) {
     await transaction.rollback();
-    logger.error(err);
+    logger.error(err.message);
     return err;
   }
 };

@@ -39,7 +39,7 @@ exports.decodeRefreshToken = async ({ refreshToken }) => {
         errorCode: statusCodes.STATUS_CODE_UNAUTHORIZED,
         message: errorResponses.TOKEN_INVALID,
         data: null,
-      }
+      };
     }
 
     if (decodedToken.token_type !== 'REFRESH_TOKEN') {
@@ -58,11 +58,11 @@ exports.decodeRefreshToken = async ({ refreshToken }) => {
 
     return {
       success: true,
-      message: successResponses.DATA_FETCH_SUCCESSFULL,
+      message: successResponses.DATA_FETCH_SUCCESSFUL,
       data: userDataWithRoles[0],
     };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
@@ -91,7 +91,7 @@ exports.getValidUserWithRoleDetails = async ({ email, app }) => {
 
       return {
         success: true,
-        message: successResponses.DATA_FETCH_SUCCESSFULL,
+        message: successResponses.DATA_FETCH_SUCCESSFUL,
         data: userRolesData[0],
       };
     }
@@ -118,10 +118,10 @@ exports.getUser = async ({ where, options = {}, attributes = {} }) => {
     const exclude = ['created_at', 'updated_at', 'createdAt', 'updatedAt'];
     const userData = raw
       ? await aergov_users.findOne({
-        where,
-        raw: true,
-        attributes: { exclude },
-      })
+          where,
+          raw: true,
+          attributes: { exclude },
+        })
       : await aergov_users.findOne({ where, attributes: { exclude } });
     if (!userData) {
       return {
@@ -133,7 +133,7 @@ exports.getUser = async ({ where, options = {}, attributes = {} }) => {
     }
     return {
       success: true,
-      message: successResponses.DATA_FETCH_SUCCESSFULL,
+      message: successResponses.DATA_FETCH_SUCCESSFUL,
       data: userData,
     };
   } catch (err) {
@@ -159,7 +159,7 @@ exports.createPasswordResetEntry = async ({ userData }) => {
     const { uuid: reset_uuid } = data;
     return {
       success: true,
-      message: successResponses.DATA_FETCH_SUCCESSFULL,
+      message: successResponses.DATA_FETCH_SUCCESSFUL,
       data: reset_uuid,
     };
   } catch (err) {
@@ -188,15 +188,14 @@ exports.getResetData = async ({ where, options = {} }) => {
     }
     return {
       success: true,
-      message: successResponses.DATA_FETCH_SUCCESSFULL,
+      message: successResponses.DATA_FETCH_SUCCESSFUL,
       data: resetData,
     };
   } catch (err) {
-    logger.error(err.message);
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
-      message: err.message,
+      message: errorResponses.INTERNAL_ERROR,
       data: null,
     };
   }
@@ -215,7 +214,7 @@ exports.checkResetValidity = async ({ resetData: resetInfo }) => {
     }
     return {
       success: true,
-      message: successResponses.DATA_FETCH_SUCCESSFULL,
+      message: successResponses.DATA_FETCH_SUCCESSFUL,
       data: true,
     };
   } catch (err) {
@@ -252,7 +251,7 @@ exports.changeUserPassword = async ({
       data: null,
     };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return {
       success: false,
       code: statusCodes.STATUS_CODE_FAILURE,
@@ -262,9 +261,17 @@ exports.changeUserPassword = async ({
   }
 };
 
-exports.changeTemporarayPassword = async ({ userId, password: enteredPassword }) => {
+exports.changeTemporarayPassword = async ({
+  userId,
+  password: enteredPassword,
+}) => {
   try {
-    const { success, errorCode, message, data: userData } = await this.getUser({ where: { id: userId }, options: { raw: false } })
+    const {
+      success,
+      errorCode,
+      message,
+      data: userData,
+    } = await this.getUser({ where: { id: userId }, options: { raw: false } });
     if (!success) {
       return {
         success,
@@ -283,7 +290,7 @@ exports.changeTemporarayPassword = async ({ userId, password: enteredPassword })
       data: null,
     };
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     return {
       success: false,
       code: statusCodes.STATUS_CODE_FAILURE,
