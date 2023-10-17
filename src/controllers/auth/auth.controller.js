@@ -49,6 +49,7 @@ exports.login = async (req, res, next) => {
       user_type,
       profile_url,
       first_time_login,
+      landing_page,
     } = userData;
     const isPasswordValid = await verifyPassword({
       enteredPassword,
@@ -87,6 +88,7 @@ exports.login = async (req, res, next) => {
         data: {
           id_token: idToken,
           refresh_token: refreshToken,
+          landing_page,
           profile,
         },
       });
