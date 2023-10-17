@@ -2,14 +2,27 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
 exports.generateTemporaryPassword = async (length = 10) => {
-  const charset =
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let password = '';
-  for (let index = 0; index < length; index++) {
-    const randomIndex = crypto.randomInt(0, charset.length);
-    password += charset[randomIndex];
-  }
-  return password;
+  const uppercaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  const digits = '0123456789';
+  const specialCharacters = '!@#$%^&*';
+  const allCharacters = uppercaseLetters + digits + specialCharacters;
+
+  const randomUppercase = uppercaseLetters[Math.floor(Math.random() * uppercaseLetters.length)];
+  const randomDigit = digits[Math.floor(Math.random() * digits.length)];
+  const randomSpecialCharacter = specialCharacters[Math.floor(Math.random() * specialCharacters.length)];
+
+  const randomLength = Math.floor(Math.random() * (12 - 8 + 1)) + 8;
+
+  const randomString = Array.from({ length: randomLength }, () => {
+    const randomIndex = Math.floor(Math.random() * allCharacters.length);
+    return allCharacters[randomIndex];
+  }).join('');
+
+  const temporaryPassword = randomString.replace(/[A-Z]/, randomUppercase)
+    .replace(/[0-9]/, randomDigit)
+    .replace(/[^A-Za-z0-9]/, randomSpecialCharacter);
+  console.log(temporaryPassword)
+  return temporaryPassword
 };
 
 exports.hashPassword = async ({ password }) => {
