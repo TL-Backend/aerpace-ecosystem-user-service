@@ -27,8 +27,6 @@ exports.configHelper = async (params) => {
       };
     }
 
-    console.log('rolePermissions[0][0]--->', rolePermissions[0][0].permission_tree);
-
     const landingPage = this.getLandingPage({
       permissions: rolePermissions[0][0].permission_tree,
     });
