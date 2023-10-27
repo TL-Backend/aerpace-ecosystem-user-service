@@ -55,7 +55,7 @@ exports.sendTemporaryPasswordEmail = async ({
 }) => {
   try {
     const data = await postAsync({
-      uri: `http://localhost:3000/notifications`,
+      uri: process.env.NOTIFICATION_SERVICE,
       body: this.emailConstants.temporaryPasswordInput({
         email,
         temporaryPassword,
@@ -87,6 +87,7 @@ exports.sendResetLinkToEmail = async ({
         resetUuid,
       }),
     });
+    console.log('data--->', data);
 
     return true;
   } catch (err) {
