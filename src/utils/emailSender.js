@@ -87,7 +87,6 @@ exports.sendResetLinkToEmail = async ({
         resetUuid,
       }),
     });
-    console.log('data--->', data);
 
     return true;
   } catch (err) {
@@ -109,7 +108,7 @@ exports.emailConstants = {
         email: email,
       },
       user_id: userId,
-      lang: emailLanguages.ARABIC,
+      lang: emailLanguages.ENGLISH,
     };
   },
   resetPassword: ({ userId, email, userName, resetUuid }) => {
