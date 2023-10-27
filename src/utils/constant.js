@@ -18,3 +18,33 @@ exports.expirationTime = {
 exports.levelStarting = {
   distribution: 'dr_',
 };
+
+exports.successResponses = {
+  TOKEN_DATA_FETCHED: `Token data fetched successfully`,
+  HEALTH_CHECK_SUCCESS: `Health check passed`,
+};
+
+exports.errorResponses = {
+  SOMETHING_WENT_WRONG: `Something went wrong`,
+  ACCESS_DENIED: `Access denied`,
+  INVALID_CSV_FILE: `Invalid csv file`,
+};
+
+exports.methods = {
+  POST: `POST`,
+  GET: `GET`,
+  PATCH: `PATCH`,
+  PUT: `PUT`,
+  DELETE: `DELETE`,
+};
+
+exports.notificationTypes = {
+  USER_TEMPORARY_PASSWORD: `USER_TEMPORARY_PASSWORD`,
+  USER_PASSWORD_RESET_MESSAGE: `USER_PASSWORD_RESET_MESSAGE`,
+};
+
+exports.notificationChannels = {
+  EMAIL_NOTIFICATION: `EMAIL_NOTIFICATION`,
+  SMS_NOTIFICATION: `SMS_NOTIFICATION`,
+  PUSH_NOTIFICATION: `PUSH_NOTIFICATION`,
+};

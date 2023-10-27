@@ -66,6 +66,8 @@ exports.addUserHelper = async (user) => {
       await sendTemporaryPasswordEmail({
         email: userData.email,
         temporaryPassword,
+        userId:userData.id,
+        userName: userData.first_name
       });
       user.id = userData.id;
       delete user.password;

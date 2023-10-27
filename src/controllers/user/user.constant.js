@@ -32,3 +32,8 @@ exports.userType = {
   USER: `USER`,
   MEMBER: `MEMBER`,
 };
+
+exports.emailLanguages = {
+  ENGLISH: `en`,
+  ARABIC: `ar`
+}

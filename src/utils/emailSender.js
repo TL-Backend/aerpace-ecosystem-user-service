@@ -1,5 +1,8 @@
 const AWS = require('aws-sdk');
 const { logger } = require('./logger');
+const { emailLanguages } = require('../controllers/user/user.constant');
+const { postAsync } = require('./ApiRequest');
+const { notificationTypes, notificationChannels } = require('./constant');
 require('dotenv').config();
 
 exports.mailService = async ({ params }) => {
@@ -44,33 +47,48 @@ exports.sendEmail = async ({ email, resetUuid }) => {
   }
 };
 
-exports.sendTemporaryPasswordEmail = async ({ email, temporaryPassword }) => {
+exports.sendTemporaryPasswordEmail = async ({
+  email,
+  temporaryPassword,
+  userName,
+  userId,
+}) => {
   try {
-    const emailContent =
-      this.emailConstants.TEMPORARY_PASSWORD_EMAIL_CONTENT.replace(
-        '{temporaryPassword}',
+    const data = await postAsync({
+      uri: process.env.NOTIFICATION_SERVICE,
+      body: this.emailConstants.temporaryPasswordInput({
+        email,
         temporaryPassword,
-      );
-    const params = {
-      Destination: {
-        ToAddresses: [email],
-      },
-      Message: {
-        Body: {
-          Html: {
-            Charset: 'UTF-8',
-            Data: emailContent,
-          },
-        },
-        Subject: {
-          Charset: 'UTF-8',
-          Data: this.emailConstants.SUBJECT,
-        },
-      },
-      Source: this.emailConstants.FROM_EMAIL,
-      ReplyToAddresses: [this.emailConstants.REPLY_TO_EMAIL],
-    };
-    await this.mailService({ params });
+        userName,
+        userId,
+      }),
+    });
+
+    return true;
+  } catch (err) {
+    logger.error(err.message);
+    return false;
+  }
+};
+
+exports.sendResetLinkToEmail = async ({
+  userName,
+  email,
+  resetUuid,
+  userId,
+}) => {
+  try {
+    const data = await postAsync({
+      uri: process.env.NOTIFICATION_SERVICE,
+      body: this.emailConstants.resetPassword({
+        email,
+        userName,
+        userId,
+        resetUuid,
+      }),
+    });
+    console.log('data--->', data);
+
     return true;
   } catch (err) {
     logger.error(err.message);
@@ -79,27 +97,34 @@ exports.sendTemporaryPasswordEmail = async ({ email, temporaryPassword }) => {
 };
 
 exports.emailConstants = {
-  FROM_EMAIL: 'pradeep@tilicho.in',
-  REPLY_TO_EMAIL: 'pradeep@tilicho.in',
-  SUBJECT: 'Welcome to aerpace - Temporary Password',
-  TEMPORARY_PASSWORD_SUBJECT: 'Hello aerpace user - Reset your password',
-  TEMPORARY_PASSWORD_EMAIL_CONTENT: `
-  <p>Hello,</p>
-  <p>Welcome to our system! Here is your temporary password for your initial login:</p>
-  <p><strong>{temporaryPassword}</strong></p>
-  <p>Please keep this password secure and change it after your first login.</p>
-  <p>Click the link below to log in:</p>
-  <p><a href="https://example.com/login">Log In</a></p>
-  <p>If you have any questions or need assistance, feel free to contact us.</p>
-  <p>Best regards,</p>
-  <p>-aerpace</p>
-  `,
-  RESET_LINK_EMAIL_CONTENT: `
-    <p>Hello,</p>
-    <p>You have requested a password reset for your account. Click the link below to reset your password:</p>
-    <p><a href="$resetLink">resetLink</a></p>
-    <p>If you did not request a password reset, please ignore this email.</p>
-    <p>Best regards,</p> 
-    <p>-aerpace</p>
-    `,
+  temporaryPasswordInput: ({ email, temporaryPassword, userName, userId }) => {
+    return {
+      notification_type: notificationTypes.USER_TEMPORARY_PASSWORD,
+      channels: [notificationChannels.EMAIL_NOTIFICATION],
+      content: {
+        user_name: userName,
+        temporary_password: temporaryPassword,
+      },
+      contact_info: {
+        email: email,
+      },
+      user_id: userId,
+      lang: emailLanguages.ARABIC,
+    };
+  },
+  resetPassword: ({ userId, email, userName, resetUuid }) => {
+    return {
+      notification_type: notificationTypes.USER_PASSWORD_RESET_MESSAGE,
+      channels: [notificationChannels.EMAIL_NOTIFICATION],
+      content: {
+        user_name: userName,
+        reset_password_link: `${process.env.CHANGE_PASSWORD_URL}?uuid=${resetUuid}`,
+      },
+      contact_info: {
+        email: email,
+      },
+      user_id: userId,
+      lang: emailLanguages.ENGLISH,
+    };
+  },
 };

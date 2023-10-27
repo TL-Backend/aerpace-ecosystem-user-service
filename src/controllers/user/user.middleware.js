@@ -91,7 +91,6 @@ exports.validateUserInput = async (req, res, next) => {
     return next();
   } catch (error) {
     logger.error(error);
-    console.log('type of error', typeof error);
     return errorResponse({
       req,
       res,
@@ -194,7 +193,6 @@ exports.validateUserUpdateInput = async (req, res, next) => {
     return next();
   } catch (error) {
     logger.error(error);
-    console.log('type of error', typeof error);
     return errorResponse({
       req,
       res,

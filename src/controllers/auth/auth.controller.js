@@ -23,7 +23,7 @@ const {
   getValidUserWithRoleDetails,
   changeTemporarayPassword,
 } = require('./auth.helper');
-const { sendEmail } = require('../../utils/emailSender');
+const { sendResetLinkToEmail } = require('../../utils/emailSender');
 
 exports.login = async (req, res, next) => {
   try {
@@ -142,7 +142,12 @@ exports.forgotPassword = async (req, res, next) => {
         message,
       });
     }
-    await sendEmail({ email, resetUuid });
+    await sendResetLinkToEmail({
+      email,
+      resetUuid,
+      userId: userData.id,
+      userName: userData.first_name,
+    });
     return successResponse({
       res,
       message: successResponses.RESET_LINK_SENT,
