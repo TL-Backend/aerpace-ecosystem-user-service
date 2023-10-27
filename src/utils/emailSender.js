@@ -2,6 +2,7 @@ const AWS = require('aws-sdk');
 const { logger } = require('./logger');
 const { emailLanguages } = require('../controllers/user/user.constant');
 const { postAsync } = require('./ApiRequest');
+const { notificationTypes, notificationChannels } = require('./constant');
 require('dotenv').config();
 
 exports.mailService = async ({ params }) => {
@@ -78,7 +79,7 @@ exports.sendResetLinkToEmail = async ({
 }) => {
   try {
     const data = await postAsync({
-      uri: `http://localhost:3000/notifications`,
+      uri: process.env.NOTIFICATION_SERVICE,
       body: this.emailConstants.resetPassword({
         email,
         userName,
@@ -97,8 +98,8 @@ exports.sendResetLinkToEmail = async ({
 exports.emailConstants = {
   temporaryPasswordInput: ({ email, temporaryPassword, userName, userId }) => {
     return {
-      notification_type: 'USER_TEMPORARY_PASSWORD',
-      channels: ['EMAIL_NOTIFICATION'],
+      notification_type: notificationTypes.USER_TEMPORARY_PASSWORD,
+      channels: [notificationChannels.EMAIL_NOTIFICATION],
       content: {
         user_name: userName,
         temporary_password: temporaryPassword,
@@ -112,8 +113,8 @@ exports.emailConstants = {
   },
   resetPassword: ({ userId, email, userName, resetUuid }) => {
     return {
-      notification_type: 'USER_PASSWORD_RESET_MESSAGE',
-      channels: ['EMAIL_NOTIFICATION'],
+      notification_type: notificationTypes.USER_PASSWORD_RESET_MESSAGE,
+      channels: [notificationChannels.EMAIL_NOTIFICATION],
       content: {
         user_name: userName,
         reset_password_link: `${process.env.CHANGE_PASSWORD_URL}?uuid=${resetUuid}`,
