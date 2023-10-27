@@ -18,3 +18,23 @@ exports.expirationTime = {
 exports.levelStarting = {
   distribution: 'dr_',
 };
+
+
+exports.successResponses = {
+  TOKEN_DATA_FETCHED: `Token data fetched successfully`,
+  HEALTH_CHECK_SUCCESS: `Health check passed`,
+};
+
+exports.errorResponses = {
+  SOMETHING_WENT_WRONG: `Something went wrong`,
+  ACCESS_DENIED: `Access denied`,
+  INVALID_CSV_FILE: `Invalid csv file`,
+};
+
+exports.methods = {
+  POST: `POST`,
+  GET: `GET`,
+  PATCH: `PATCH`,
+  PUT: `PUT`,
+  DELETE: `DELETE`,
+};
