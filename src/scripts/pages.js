@@ -46,7 +46,7 @@ exports.pagesAndFeatures = [
           {
             id: 8,
             name: 'View List Drone',
-            page_id: 2,
+            page_id: 3,
             identifier: 'DEVICES_MANAGEMENT#DRONE_TAB#TAB_LIST_VIEW',
           },
         ],
