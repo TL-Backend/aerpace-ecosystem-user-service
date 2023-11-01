@@ -228,55 +228,39 @@ exports.pagesAndFeaturesToMasterPermissionTree = (pageAndFeaturesObject) => {
   return rootPages;
 };
 
-exports.getPermissionTree = (masterList, permission, tree) => {
+exports.getPermissionTree = (masterList, permissions, tree) => {
   masterList.forEach((element) => {
-    const isPresent = element.features.find((element) => {
-      return element.identifier == permission;
-    });
-    if (isPresent) {
-      let index = tree.findIndex(
-        (element1) => element1.identifier == element.identifier,
-      );
+    let features = [];
+    if (element.features) {
+      features = element.features.filter(feature => permissions.includes(feature.identifier));
+    }
 
-      if (index == -1) {
-        tree.push({});
-        index = tree.length - 1;
-        tree[index].page_id = element.page_id;
-        tree[index].name = element.name;
-        tree[index].identifier = element.identifier;
-        tree[index].pages = [];
-        tree[index].features = [isPresent];
-      } else {
-        tree[index].features.push(isPresent);
-      }
-    } else if (permission.includes(element.identifier)) {
-      let index = tree.findIndex(
-        (element1) => element1.identifier == element.identifier,
-      );
+    let childPages = [];
+    if (element.pages && element.pages.length) {
+      this.getPermissionTree(element.pages, permissions, childPages);
+    }
 
-      if (index == -1) {
-        tree.push({});
-        index = tree.length - 1;
-        tree[index].page_id = element.page_id;
-        tree[index].name = element.name;
-        tree[index].identifier = element.identifier;
-        tree[index].pages = [];
-        tree[index].features = [];
-      }
-
-      this.getPermissionTree(element?.pages, permission, tree[index].pages);
+    if (features.length || childPages.length || permissions.includes(element.identifier)) {
+      let treeNode = {
+        page_id: element.page_id,
+        name: element.name,
+        identifier: element.identifier,
+        pages: childPages,
+        features: features
+      };
+      tree.push(treeNode);
     }
   });
 };
 
 exports.generatePermissionTree = (permissions, masterList) => {
   let tree = [];
-  permissions.forEach((permission) => {
-    this.getPermissionTree(masterList, permission, tree);
-  });
-
+  this.getPermissionTree(masterList, permissions, tree);
   return tree;
 };
+
+
+
 
 exports.editRoleHelper = async ({ id, roleName, permissions }) => {
   try {

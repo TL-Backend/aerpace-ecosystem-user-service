@@ -11,16 +11,10 @@ exports.pagesAndFeatures = [
         pages: [],
         features: [
           {
-            id: 8,
-            name: 'View List Car Types',
-            page_id: 2,
-            identifier: 'DEVICES_MANAGEMENT#CAR_TAB#TAB_LIST_VIEW',
-          },
-          {
             id: 9,
             name: 'View List Cars',
             page_id: 2,
-            identifier: 'DEVICES_MANAGEMENT#CAR_TAB#VIEW_CAR',
+            identifier: 'DEVICES_MANAGEMENT#CAR_TAB#TAB_LIST_VIEW',
           },
           {
             id: 10,
@@ -48,7 +42,14 @@ exports.pagesAndFeatures = [
         name: 'Drone',
         identifier: 'DEVICES_MANAGEMENT#DRONE_TAB',
         pages: [],
-        features: [],
+        features: [
+          {
+            id: 8,
+            name: 'View List Drone',
+            page_id: 3,
+            identifier: 'DEVICES_MANAGEMENT#DRONE_TAB#TAB_LIST_VIEW',
+          },
+        ],
         parent_id: 1,
       },
       {
@@ -56,7 +57,14 @@ exports.pagesAndFeatures = [
         name: 'Solar Panel',
         identifier: 'DEVICES_MANAGEMENT#SOLAR_PANEL_TAB',
         pages: [],
-        features: [],
+        features: [
+          {
+            id: 24,
+            name: 'View List Solar Panels',
+            page_id: 4,
+            identifier: 'DEVICES_MANAGEMENT#SOLAR_PANEL_TAB#TAB_LIST_VIEW',
+          },
+        ],
         parent_id: 1,
       },
       {
