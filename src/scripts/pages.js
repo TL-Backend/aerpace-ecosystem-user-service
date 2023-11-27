@@ -53,21 +53,6 @@ exports.pagesAndFeatures = [
         parent_id: 1,
       },
       {
-        id: 4,
-        name: 'Solar Panel',
-        identifier: 'DEVICES_MANAGEMENT#SOLAR_PANEL_TAB',
-        pages: [],
-        features: [
-          {
-            id: 24,
-            name: 'View List Solar Panels',
-            page_id: 4,
-            identifier: 'DEVICES_MANAGEMENT#SOLAR_PANEL_TAB#TAB_LIST_VIEW',
-          },
-        ],
-        parent_id: 1,
-      },
-      {
         id: 5,
         name: 'Manage Privileges',
         identifier: 'DEVICES_MANAGEMENT#MANAGE_PRIVILEGES',
