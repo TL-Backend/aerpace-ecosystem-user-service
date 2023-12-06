@@ -280,6 +280,14 @@ exports.changeTemporarayPassword = async ({
         data: null,
       };
     }
+    if (userData.first_time_login === 0) {
+      return {
+        success: false,
+        errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
+        message: errorResponses.NOT_FIRST_TIME_LOGIN,
+        data: {}
+      }
+    }
     const hashedPassword = await hashPassword({ password: enteredPassword });
     userData.password = hashedPassword;
     userData.first_time_login = 0;

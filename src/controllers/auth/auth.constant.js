@@ -24,6 +24,7 @@ exports.errorResponses = {
   INVALID_APP_TYPE: 'App type required',
   PASSWORD_INVALID: 'Password required',
   INTERNAL_ERROR: 'Something went wrong',
+  NOT_FIRST_TIME_LOGIN: 'Something went wrong'
 };
 
 exports.appType = {
