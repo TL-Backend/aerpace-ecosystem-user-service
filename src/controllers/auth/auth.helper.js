@@ -66,7 +66,7 @@ exports.decodeRefreshToken = async ({ refreshToken }) => {
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
-      message: err.message,
+      message: errorResponses.INTERNAL_ERROR,
       data: null,
     };
   }
@@ -106,7 +106,7 @@ exports.getValidUserWithRoleDetails = async ({ email, app }) => {
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
-      message: err.message,
+      message: errorResponses.INTERNAL_ERROR,
       data: null,
     };
   }
@@ -141,7 +141,7 @@ exports.getUser = async ({ where, options = {}, attributes = {} }) => {
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
-      message: err.message,
+      message: errorResponses.INTERNAL_ERROR,
       data: null,
     };
   }
@@ -167,7 +167,7 @@ exports.createPasswordResetEntry = async ({ userData }) => {
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
-      message: err.message,
+      message: errorResponses.INTERNAL_ERROR,
       data: null,
     };
   }
@@ -222,7 +222,7 @@ exports.checkResetValidity = async ({ resetData: resetInfo }) => {
     return {
       success: false,
       errorCode: statusCodes.STATUS_CODE_FAILURE,
-      message: err.message,
+      message: errorResponses.INTERNAL_ERROR,
       data: null,
     };
   }
@@ -255,7 +255,7 @@ exports.changeUserPassword = async ({
     return {
       success: false,
       code: statusCodes.STATUS_CODE_FAILURE,
-      message: err.message,
+      message: errorResponses.INTERNAL_ERROR,
       data: null,
     };
   }
@@ -280,6 +280,14 @@ exports.changeTemporarayPassword = async ({
         data: null,
       };
     }
+    if (userData.first_time_login === 0) {
+      return {
+        success: false,
+        errorCode: statusCodes.STATUS_CODE_INVALID_FORMAT,
+        message: errorResponses.NOT_FIRST_TIME_LOGIN,
+        data: {}
+      }
+    }
     const hashedPassword = await hashPassword({ password: enteredPassword });
     userData.password = hashedPassword;
     userData.first_time_login = 0;
@@ -294,7 +302,7 @@ exports.changeTemporarayPassword = async ({
     return {
       success: false,
       code: statusCodes.STATUS_CODE_FAILURE,
-      message: err.message,
+      message: errorResponses.INTERNAL_ERROR,
       data: null,
     };
   }
